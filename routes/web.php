@@ -18,3 +18,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('projects/user', 'ProjectController@userProjects');
+Route::resource('projects', 'ProjectController')->except(['create', 'edit']);
+
+
+
