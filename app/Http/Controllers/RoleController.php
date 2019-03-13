@@ -7,14 +7,12 @@ use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
+    // Show all Roles
     public function index()
     {
-        //
+        $roles = Role::get();
+        return response()->json(['roles' => $roles ]);
     }
 
     /**
@@ -38,15 +36,12 @@ class RoleController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Role  $role
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Role $role)
+
+    // Show role by id
+    public function show($id)
     {
-        //
+        $role = Role::find($id);
+        return response()->json(['role' => $role]);
     }
 
     /**

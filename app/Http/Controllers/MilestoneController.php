@@ -7,77 +7,43 @@ use Illuminate\Http\Request;
 
 class MilestoneController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
+    // Get all milestones
     public function index()
     {
-        //
+        $milestones = Milestone::with('project', 'tickets')->get();
+        return response()->json(['milestones' => $milestones ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    // Get all milestones for one project
+    public function project($id)
     {
-        //
+        $milestones = Milestone::with('project', 'tickets')->where('project_id', $id)->get();
+        return response()->json(['milestones' => $milestones ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    // Create milestone 
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Milestone  $milestone
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Milestone $milestone)
+
+    // Show milestone by id
+    public function show($id)
     {
-        //
+        $milestone = Milestone::with('project', 'tickets')->find($id);
+        return response()->json(['milestone' => $milestone]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Milestone  $milestone
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Milestone $milestone)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Milestone  $milestone
-     * @return \Illuminate\Http\Response
-     */
+    // Edit milestone
     public function update(Request $request, Milestone $milestone)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Milestone  $milestone
-     * @return \Illuminate\Http\Response
-     */
+    // Delete milestone
     public function destroy(Milestone $milestone)
     {
         //

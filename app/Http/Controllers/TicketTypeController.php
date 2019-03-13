@@ -7,79 +7,39 @@ use Illuminate\Http\Request;
 
 class TicketTypeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    // Get all types
     public function index()
     {
-        //
+        {
+            $ticket_types = TicketType::get();
+            return response()->json(['types' => $ticket_types]);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    // Create new type 
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\TicketType  $ticketType
-     * @return \Illuminate\Http\Response
-     */
-    public function show(TicketType $ticketType)
+    // Get type by id
+    public function show($id)
+    {
+        $type = TicketType::find($id);
+        return response()->json(['type' => $type]);
+    }
+
+    // Update type
+    public function update(Request $request, Tickettype $tickettype)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\TicketType  $ticketType
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(TicketType $ticketType)
+    // Delete type
+    public function destroy(Tickettype $id)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\TicketType  $ticketType
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, TicketType $ticketType)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\TicketType  $ticketType
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(TicketType $ticketType)
-    {
-        //
+        $type = TicketType::find($id);
+        $type->delete();
+        return response()->json(['message' => 'Ticket type was deleted']);
     }
 }

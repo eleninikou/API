@@ -44,6 +44,7 @@ class LoginController extends Controller
             $new_user->google_id = $user->id;
             $new_user->password = md5(rand(1,10000));
             $new_user->save();
+            
             Auth::loginUsingId($user->id);
 
             auth()->login($newUser, true);

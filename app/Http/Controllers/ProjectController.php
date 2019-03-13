@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 class ProjectController extends Controller
 {
 
-
     // Show all Projects
     public function index()
     {
@@ -30,18 +29,18 @@ class ProjectController extends Controller
     // Create project
     public function store(Request $request)
     {
-        $user = Auth::user();
+        // $user = Auth::user();
 
-        $project = $this->validate(request(), [
-            'name' => 'required',
-            'description' => 'required',
-            'creator_id' => $user->id,
-            'client_id' => 'required|numeric'
-        ]);
+        // $project = $this->validate(request(), [
+        //     'name' => 'required',
+        //     'description' => 'required',
+        //     'creator_id' => $user->id,
+        //     'client_id' => 'required|numeric'
+        // ]);
 
 
-        Project::create($project);
-        return response()->json(['project' => $project, 'message' => 'Project was created']);
+        // Project::create($project);
+        // return response()->json(['project' => $project, 'message' => 'Project was created']);
     }
 
 
@@ -54,24 +53,31 @@ class ProjectController extends Controller
 
 
     // Edit project
-    public function update($id)
+    public function update($request, $id)
     {
-        $project = Project::find($id);
-        $this->validate(request(), [
-            'name' => 'required',
-            'description' => 'required',
-            'creator_id' => 'required',
-            'client_id' => 'required',
+        // $user = Auth::user();
+        // $project = Project::find($id);
 
-        ]);
+        // if ($user->id === $project->creator_id) {
+        //     $this->validate(request(), [
+        //         'name' => 'required',
+        //         'description' => 'required',
+        //         'creator_id' => 'required',
+        //         'client_id' => 'required',
+    
+        //     ]);
+    
+        //     $project->name = $request->get('name');
+        //     $project->description = $request->get('description');
+        //     $project->creator_id = $request->get('creator_id');
+        //     $project->client_id = $request->get('client_id');
+    
+        //     $project->save();
+        //     return response()->json(['project' => $project, 'message' => 'Project was updated']);
+        // } else {
+        //     return response()->json(['message' => 'You can only update projects that you have created']);
 
-        $project->name = $request->get('name');
-        $project->description = $request->get('description');
-        $project->creator_id = $request->get('creator_id');
-        $project->client_id = $request->get('client_id');
-
-        $project->save();
-        return response()->json(['project' => $project, 'message' => 'Project was updated']);
+        // }
 
     }
 
@@ -79,9 +85,15 @@ class ProjectController extends Controller
     // Delete project
     public function destroy($id)
     {
-        $project = Project::find($id);
-        $project->delete();
-        return response()->json(['message' => 'Projected was deleted']);
+        // $user = Auth::user();
+        // $project = Project::find($id);
+
+        // if ($user->id === $project->creator_id) {
+        //     $project->delete();
+        //     return response()->json(['message' => 'Projected was deleted']);
+        // } else {
+        //     return response()->json(['message' => 'You can only delete the projects that you have created']);
+        // }
 
     }
 }

@@ -33,8 +33,8 @@ class Ticket extends Model
         return $this->belongsTo(TicketType::class, 'type_id', 'id');
     }
 
-    public function state() {
-        return $this->belongsTo(TicketState::class, 'state_id', 'id');
+    public function status() {
+        return $this->belongsTo(TicketStatus::class, 'status_id', 'id');
     }
 
     public function project() {
@@ -54,10 +54,10 @@ class Ticket extends Model
     }
 
     public function attachments() {
-        return $this->hasMany(TicketAttachments::class);
+        return $this->hasMany(TicketAttachment::class);
     }
 
     public function comments() {
-        return $this->hasMany(TicketComments::class);
+        return $this->hasMany(TicketComment::class);
     }
 }
