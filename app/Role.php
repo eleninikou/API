@@ -1,7 +1,7 @@
 <?php
 
 namespace App;
-
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
@@ -12,5 +12,7 @@ class Role extends Model
     
     protected $table = 'roles';
 
-
+    public function user() {
+        return $this->belongsToMany(User::class);
+    }
 }

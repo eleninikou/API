@@ -17,4 +17,19 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Route::post('/register', 'AuthController@register');
+// Route::post('/login', 'AuthController@login');
+// Route::post('/logout', 'AuthController@logout');
+
+Route::post('register', 'UserController@register');
+Route::post('login', 'UserController@authenticate');
+
+Route::group(['middleware' => ['jwt.verify']], function() {
+    Route::get('user', 'UserController@getAuthenticatedUser');
+});
+
+
+
+
+
 Route::get('projects', 'ProjectController@index');

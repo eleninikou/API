@@ -34,4 +34,15 @@ class Project extends Model
         return $this->hasMany(Milestone::class);
     }
 
+    public function team() {
+        return $this->hasManyThrough(
+            User::class, 
+            ProjectUserRole::class,
+            'user_id',
+            'id'
+        );
+    }
+
 }
+
+

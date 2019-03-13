@@ -15,6 +15,8 @@
                     @endif
 
                     You are logged in!
+                    <?php         dd($token = JWTAuth::getToken());
+                    ?>
                 </div>
             </div>
         </div>

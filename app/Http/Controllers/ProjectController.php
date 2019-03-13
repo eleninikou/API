@@ -22,7 +22,7 @@ class ProjectController extends Controller
     public function userProjects()
     {
         $user = Auth::user();
-        $projects = Project::with('milestones', 'client')->where('creator_id', $user->id)->get();
+        $projects = Project::with('milestones', 'client', 'team')->where('creator_id', $user->id)->get();
         return response()->json(['projects' => $projects ]);
     }
 
@@ -31,37 +31,24 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        dd($request);
 
-        $this->validate(request(), [
+        $project = $this->validate(request(), [
             'name' => 'required',
             'description' => 'required',
+            'creator_id' => $user->id,
             'client_id' => 'required|numeric'
         ]);
 
-        // $project->name = $request->get('name');
-        // $project->description = $request->get('description');
-        // $project->creator_id = $user->id;
-        // $project->client_id = $request->get('client_id');
-
-        $project = [
-            'name' => $request->answer,
-            'description' => $request->description,
-            'creator_id' => 1,
-            'client_id' => $request->client_id
-        ];
 
         Project::create($project);
         return response()->json(['project' => $project, 'message' => 'Project was created']);
-
-
     }
 
 
     // Show project by id
     public function show($id)
     {
-        $project = Project::with('milestones', 'client', 'creator')->find($id);
+        $project = Project::with('milestones', 'client', 'creator', 'team')->find($id);
         return response()->json(['project' => $project]);
     }
 
@@ -70,11 +57,12 @@ class ProjectController extends Controller
     public function update($id)
     {
         $project = Project::find($id);
-
         $this->validate(request(), [
             'name' => 'required',
             'description' => 'required',
             'creator_id' => 'required',
+            'client_id' => 'required',
+
         ]);
 
         $project->name = $request->get('name');
