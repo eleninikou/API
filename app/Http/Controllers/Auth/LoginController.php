@@ -47,7 +47,7 @@ class LoginController extends Controller
             
             Auth::loginUsingId($user->id);
 
-            auth()->login($newUser, true);
+            auth()->login($new_user, true);
         }
 
         return redirect()->to('/home');
