@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Project;
 use App\Invite;
+use App\ProjectUserRole;
 use App\Mail\Invitation;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 
@@ -41,23 +43,32 @@ class InviteController extends Controller
     {
         // Look up the invite
         if (!$invite = Invite::where('token', $token)->first()) {
-            //if the invite doesn't exist do something more graceful than this
-            abort(404);
+            return response()->json(['message' => 'Seems like you invitation got lost']);
         }
 
-        // delete the invite so it can't be used again
-        $invite->delete();
-
-            // check if they're an existing user
-        $existingUser = User::where('email', $user->email)->first();
-
+        
+        // check if they're an existing user
+        $existingUser = User::where('email', $invite->email)->first();        
         if($existingUser){
-            // log them in
+
+            // Give role in project
+            $user_role = [
+                'user_id' => $existingUser->id,
+                'role_id' => 2,
+                'project_id' => $invite->project_id
+            ];
+            
+            ProjectUserRole::create($user_role);
+            
+            // Log them in
             auth()->login($existingUser, true);
                 $user = Auth::user();
                 $success['token'] =  $user->createToken('Login')->accessToken;
                 $success['user'] = $user;
-                return response()->json(['success' => $success], $this->successStatus);
+
+                // delete the invite so it can't be used again
+                $invite->delete();
+                return response()->json(['success' => $success]);
        
         } else {
 
@@ -68,10 +79,20 @@ class InviteController extends Controller
             $new_user->password = md5(rand(1,10000));
             $new_user->save();
             
-            Auth::loginUsingId($user->id);
+            $user = User::lastInsertedId();
 
+            $new_user_role = [
+                'user_id' => $user->id,
+                'role_id' => 2,
+                'project_id' => $invite->project_id
+            ];
+
+            ProjectUserRole::create($user_role);
+            // delete the invite so it can't be used again
+            $invite->delete();
             auth()->login($newUser, true);
+            return response()->json(['message' => $success]);
         }
-        return 'Good job! Invite accepted!';
+
     }
 }

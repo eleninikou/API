@@ -32,6 +32,7 @@ Route::get('mailable', function () {
     return new Invitation($invite);
 });
 
+Route::get('accept/{token}', 'InviteController@accept'); // {token} is a required parameter that will be exposed to us in the controller method
 
 
 
