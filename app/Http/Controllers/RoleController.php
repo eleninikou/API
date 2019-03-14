@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Validator;
 use App\Role;
 use Illuminate\Http\Request;
 
@@ -15,25 +15,26 @@ class RoleController extends Controller
         return response()->json(['roles' => $roles ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'role' => 'required',
+        ]);
+            
+        if ($validator->fails()) {
+            return response()->json(['error'=>$validator->errors()], 401); 
+
+        } else {
+
+            $role = [
+                'role' => $request->role,
+            ];
+                
+           Role::create($role);
+            return response()->json(['role' => $role, 'message' => 'Role was created']);
+        }
+        return response()->json(['message' => 'Could not create role']);
     }
 
 
@@ -44,37 +45,38 @@ class RoleController extends Controller
         return response()->json(['role' => $role]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Role  $role
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Role $role)
+
+    public function update(Request $request, $id)
     {
-        //
+        $role = Role::find($id);
+
+        $validator = Validator::make($request->all(), [
+            'role' => 'required',
+        ]);
+
+            if ($validator->fails()) {
+
+                return response()->json(['error'=>$validator->errors()], 401); 
+
+            } else {
+
+                $role->role = $request->get('role');
+                $role->save();
+                return response()->json(['role' => $role, 'message' => 'Role was updated']);
+            
+            }
+      
+            return response()->json(['message' => 'Couldn\t update role']);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Role  $role
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Role $role)
+
+
+    public function destroy($id)
     {
-        //
+        $role = Role::find($id);
+        $role->delete();
+        return response()->json(['message' => 'Role was deleted']);
+
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Role  $role
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Role $role)
-    {
-        //
-    }
 }

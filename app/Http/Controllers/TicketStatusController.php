@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Validator;
 use App\TicketStatus;
 use Illuminate\Http\Request;
 
@@ -20,7 +20,20 @@ class TicketStatusController extends Controller
     // Create new status 
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'status' => 'required',
+        ]);
+            
+        if ($validator->fails()) {
+            return response()->json(['error'=>$validator->errors()], 401); 
+
+        } else {
+
+            $status = [ 'status' => $request->status];
+            TicketStatus::create($status);
+            return response()->json(['status' => $status, 'message' => 'Status was created']);
+        }
+        return response()->json(['message' => 'Could not create status']);
     }
 
     // Get status by id
@@ -31,13 +44,31 @@ class TicketStatusController extends Controller
     }
 
     // Update status
-    public function update(Request $request, TicketStatus $ticketStatus)
+    public function update(Request $request, $id)
     {
-        //
+        $status = TicketStatus::find($id);
+
+        $validator = Validator::make($request->all(), [
+            'status' => 'required',
+        ]);
+
+            if ($validator->fails()) {
+
+                return response()->json(['error'=>$validator->errors()], 401); 
+
+            } else {
+
+                $status->status = $request->get('status');
+                $status->save();
+                return response()->json(['status' => $status, 'message' => 'Status was updated']);
+            
+            }
+      
+            return response()->json(['message' => 'Couldn\t update status']);
     }
 
     // Delete status
-    public function destroy(TicketStatus $id)
+    public function destroy($id)
     {
         $status = TicketStatus::find($id);
         $status->delete();

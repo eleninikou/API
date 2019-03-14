@@ -38,7 +38,7 @@ Route::group(['middleware' => 'auth:api'], function(){
     
     Route::resource('status', 'TicketStatusController')->except(['create', 'edit']);
     Route::resource('types', 'TicketTypeController')->except(['create', 'edit']);
-    Route::resource('roles', 'RoleController')->except(['create', 'edit']);
+    Route::resource('roles', 'RoleController');
     Route::resource('users', 'UserController')->except(['create', 'edit']);
 });
 
