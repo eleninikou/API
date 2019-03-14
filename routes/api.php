@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,16 +17,17 @@ Route::post('register', 'API\PassportController@register');
 Route::get('/redirect', 'Auth\LoginController@redirectToProvider');
 Route::get('/callback/google', 'Auth\LoginController@handleProviderCallback');
 
-Route::get('invite', 'InviteController@invite')->name('invite');
-Route::post('invite', 'InviteController@process');
+Route::post('invite', 'InviteController@invite');
+Route::get('accept/{token}', 'InviteController@accept'); // {token} is a required parameter that will be exposed to us in the controller method
+
 
 Route::group(['middleware' => 'auth:api'], function(){
+
     Route::get('user', 'API\PassportController@getDetails');
     Route::post('logout','API\PassportController@logout'); 
 
     Route::get('projects/user', 'ProjectController@userProjects');
-    Route::resource('projects', 'ProjectController');
-    Route::get('accept/{token}', 'InviteController@accept'); // {token} is a required parameter that will be exposed to us in the controller method
+    Route::resource('projects', 'ProjectController')->except(['create', 'edit']);
     
     Route::get('milestones/project/{id}', 'MilestoneController@project');
     Route::resource('milestones', 'MilestoneController')->except(['create', 'edit']);
@@ -38,9 +37,11 @@ Route::group(['middleware' => 'auth:api'], function(){
     
     Route::resource('status', 'TicketStatusController')->except(['create', 'edit']);
     Route::resource('types', 'TicketTypeController')->except(['create', 'edit']);
-    Route::resource('roles', 'RoleController');
+    Route::resource('roles', 'RoleController')->except(['create', 'edit']);
     Route::resource('users', 'UserController')->except(['create', 'edit']);
 });
+
+
 
 
 

@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(TicketStatusTableSeeder::class);
         $this->call(TicketsTableSeeder::class);
         $this->call(TicketCommentsTableSeeder::class);
+        $this->call(InvitesTableSeeder::class);
 
     }
 }

@@ -2,22 +2,19 @@
 
 namespace App\Http\Controllers;
 use App\User;
+use App\Project;
 use App\Invite;
-use App\Mail\InviteCreated;
+use App\Mail\Invitation;
 use Illuminate\Support\Facades\Mail;
 
 use Illuminate\Http\Request;
 
 class InviteController extends Controller
 {
-    public function invite()
-    {
-        return view('home');    
-    }
 
-    public function process(Request $request)
+    public function invite(Request $request, $id)
     {
-
+        $project = Project::findOrFail($id);
         do { $token = str_random(); // generate random string 
         } 
 
@@ -25,14 +22,16 @@ class InviteController extends Controller
         while (Invite::where('token', $token)->first());
 
             //create a new invite record
-            $invite = Invite::create([
+            $invitation = Invite::create([
                 'email' => $request->get('email'),
-                'token' => $token
+                'token' => $token,
+                'project_id' => $project->id,
+                'project_name' => $project->name,
             ]);
         
             // send the email
-            Mail::to($request->get('email'))->send(new InviteCreated($invite));
-                
+            Mail::to($request->get('email'))->send(new Invitation($invitation));
+
             // redirect back where we came from
             return redirect()
                 ->back();    
@@ -46,20 +45,22 @@ class InviteController extends Controller
             abort(404);
         }
 
-        // create the user with the details from the invite
-        User::create(['email' => $invite->email]);
-
         // delete the invite so it can't be used again
         $invite->delete();
 
-        // here you would probably log the user in and show them the dashboard, but we'll just prove it worked
             // check if they're an existing user
         $existingUser = User::where('email', $user->email)->first();
 
         if($existingUser){
             // log them in
             auth()->login($existingUser, true);
+                $user = Auth::user();
+                $success['token'] =  $user->createToken('Login')->accessToken;
+                $success['user'] = $user;
+                return response()->json(['success' => $success], $this->successStatus);
+       
         } else {
+
             $new_user = new User;
             $new_user->name = $user->name;
             $new_user->email = $user->email;
