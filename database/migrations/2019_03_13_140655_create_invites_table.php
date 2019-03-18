@@ -19,6 +19,7 @@ class CreateInvitesTable extends Migration
             $table->string('token', 16)->unique();
             $table->integer('project_id');
             $table->string('project_name');
+            $table->integer('project_role');
             $table->timestamps();
         });
     }

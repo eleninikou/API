@@ -28,7 +28,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 
 Route::get('mailable', function () {
-    $invite = Invite::find(1);
+    $invite = Invite::find(3);
     return new Invitation($invite);
 });
 

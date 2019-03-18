@@ -11,7 +11,8 @@ class Invite extends Model
         'email', 
         'token',
         'project_id',
-        'project_name'
+        'project_name',
+        'project_role'
     ];
 
     public function project() {

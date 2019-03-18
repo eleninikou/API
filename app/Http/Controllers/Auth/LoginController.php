@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -11,6 +11,7 @@ use App\User;
 class LoginController extends Controller
 {
 
+public $successStatus = 200;
 
   public function redirectToProvider()
   {
@@ -28,7 +29,7 @@ class LoginController extends Controller
         try {
             $user = Socialite::driver('google')->user();
         } catch (\Exception $e) {
-            return redirect('/login');
+            return response()->json(['error' => 'could not log in user']);
         }
 
         // check if they're an existing user
@@ -37,6 +38,10 @@ class LoginController extends Controller
         if($existingUser){
             // log them in
             auth()->login($existingUser, true);
+            $user = Auth::user();
+            $success['token'] =  $user->createToken('Login')->accessToken;
+            $success['user'] = $user;
+            return response()->json(['success' => $success], $this->successStatus);
         } else {
             $new_user = new User;
             $new_user->name = $user->name;
@@ -45,12 +50,38 @@ class LoginController extends Controller
             $new_user->password = md5(rand(1,10000));
             $new_user->save();
             
-            Auth::loginUsingId($user->id);
-
             auth()->login($new_user, true);
+            return response()->json(['success' => $success], $this->successStatus);
+
         }
 
-        return redirect()->to('/home');
+    }
+
+    public function GoogleLogin(Request $request)
+    {   
+        $GoogleAuth = $request;
+
+        // check if they're an existing user
+        $existingUser = User::where('email', $GoogleAuth->email)->first();
+
+        if($existingUser){
+            // log them in
+            auth()->login($existingUser, true);
+            $user = Auth::user();
+            $success['token'] =  $user->createToken('Login')->accessToken;
+            $success['user'] = $user;
+            return response()->json(['success' => $success], $this->successStatus);
+        } else {
+            $new_user = new User;
+            $new_user->name = $GoogleAuth->name;
+            $new_user->email = $GoogleAuth->email;
+            $new_user->google_id = $GoogleAuth->googleId;
+            $new_user->password = md5(rand(1,10000));
+            $new_user->save();
+            
+            auth()->login($new_user, true);
+            return response()->json(['success' => $success], $this->successStatus);
+        }
     }
 
 

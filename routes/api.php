@@ -13,21 +13,19 @@
 
 Route::post('login', 'API\PassportController@login');
 Route::post('register', 'API\PassportController@register');
+Route::post('google', 'API\PassportController@googleAuth');
 
-Route::get('/redirect', 'Auth\LoginController@redirectToProvider');
-Route::get('/callback/google', 'Auth\LoginController@handleProviderCallback');
-
-Route::post('invite', 'InviteController@invite');
 Route::get('accept/{token}', 'InviteController@accept'); // {token} is a required parameter that will be exposed to us in the controller method
 
 
 Route::group(['middleware' => 'auth:api'], function(){
-
+    
     Route::get('user', 'API\PassportController@getDetails');
     Route::post('logout','API\PassportController@logout'); 
-
+    
     Route::get('projects/user', 'ProjectController@userProjects');
     Route::resource('projects', 'ProjectController')->except(['create', 'edit']);
+    Route::post('projects/{id}/invite', 'InviteController@invite');
     
     Route::get('milestones/project/{id}', 'MilestoneController@project');
     Route::resource('milestones', 'MilestoneController')->except(['create', 'edit']);
