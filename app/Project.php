@@ -22,6 +22,10 @@ class Project extends Model
         return $this->belongsTo(User::class, 'creator_id', 'id');
     }
 
+    public function userRole() {
+        return $this->hasMany(ProjectUserRole::class);
+    }
+
     public function client() {
         return $this->belongsTo(User::class, 'client_id', 'id');
     }

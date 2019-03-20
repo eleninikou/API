@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Project;
+use App\ProjectUserRole;
 use Validator;
 
 class ProjectController extends Controller
@@ -17,11 +18,19 @@ class ProjectController extends Controller
     }
 
 
-    // Show projects for a specific user
-    public function userProjects()
+    // Show projects created by user
+    public function userProjects($id)
     {
         $user = Auth::user();
-        $projects = Project::with('milestones', 'client', 'team')->where('creator_id', $user->id)->get();
+        $projects = Project::with('milestones', 'client', 'team', 'creator')->where('creator_id', $id)->get();
+        return response()->json(['projects' => $projects ]);
+    }
+
+        // Show projects created by user
+    public function activeProjects($id)
+    {
+        $user = Auth::user();
+        $projects = ProjectUserRole::with('project', 'role', 'tickets')->where('user_id', $id)->get();
         return response()->json(['projects' => $projects ]);
     }
 

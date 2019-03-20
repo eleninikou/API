@@ -13,7 +13,6 @@ class PassportController extends Controller
 {
     
     public $successStatus = 200;
-
     public function guard()
     {
         return Auth::guard('api');
@@ -27,11 +26,13 @@ class PassportController extends Controller
         if($existingUser){
             // log them in
             auth()->login($existingUser, true);
-                $user = Auth::user();
-                $success['token'] =  $user->createToken('Login')->accessToken;
-                $success['user'] = $user;
-                return response()->json(['success' => $success], $this->successStatus);
+            $user = Auth::user();
+            $success['token'] = $existingUser->createToken('Login')->accessToken;
+            $success['user'] = $existingUser;
+            return response()->json(["success" => $success]);
         }
+        return response()->json(["message" => 'not existing user']);
+
     }
 
 
@@ -64,25 +65,20 @@ class PassportController extends Controller
 
     public function logout()
     {
-        $accessToken = Auth::user()->token();
+        // $accessToken = Auth::user()->token();
+        // DB::table('oauth_refresh_tokens')
+        //     ->where('access_token_id', $accessToken->id)
+        //     ->update([
+        //         'revoked' => true
+        //     ]);
 
-        DB::table('oauth_refresh_tokens')
-            ->where('access_token_id', $accessToken->id)
-            ->update([
-                'revoked' => true
-            ]);
-
-        $accessToken->revoke();
-
-        return response()->json([
-            'message' => 'User was logged out.'
-        ], 200);
+        // $accessToken->revoke();
+        return response()->json(['message' => 'User was logged out.']);
     }
 
     public function googleAuth(Request $request)
     {   
         $GoogleAuth = $request;
-
         // check if they're an existing user
         $existingUser = User::where('email', $GoogleAuth->email)->first();
 

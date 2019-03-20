@@ -21,7 +21,8 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrustProxies::class,
         \Barryvdh\Cors\HandleCors::class,
         \Illuminate\Session\Middleware\StartSession::class,
-        \Illuminate\View\Middleware\ShareErrorsFromSession::class
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \Barryvdh\Cors\HandleCors::class,
     ];
 
     /**
@@ -43,7 +44,13 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:60,1',
             'bindings',
+            'cors'
+
         ],
+
+        'cors' => [
+            \Barryvdh\Cors\HandleCors::class,
+            ],
     ];
 
     /**
@@ -64,6 +71,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
+        'cors' => \Barryvdh\Cors\HandleCors::class,
     ];
 
     /**

@@ -17,12 +17,12 @@ class TicketController extends Controller
         return response()->json(['tickets' => $tickets]);
     }
 
-    public function userTickets()
+    public function userTickets($id)
     {
         $user = Auth::user();
         $tickets = Ticket::with('type', 'status', 'project', 'creator', 'assignedUser', 'milestone', 'attachments', 'comments')
         ->where('creator_id', 1)
-        ->orWhere('assigned_user_id', $user->id)
+        ->orWhere('assigned_user_id', $id)
         ->get();
 
         return response()->json(['tickets' => $tickets]);
