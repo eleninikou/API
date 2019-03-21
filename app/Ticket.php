@@ -62,6 +62,6 @@ class Ticket extends Model
     }
 
     public function userRoles() {
-        return $this->hasMany(ProjectUserRole::class, 'project_id', 'project_id');
+        return $this->belongsTo(ProjectUserRole::class, 'project_id', 'project_id');
     }
 }

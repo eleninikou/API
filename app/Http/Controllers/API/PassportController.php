@@ -98,6 +98,9 @@ class PassportController extends Controller
             $new_user->save();
             
             auth()->login($new_user, true);
+
+            $success['token'] =  $new_user->createToken('Success')->accessToken;
+            $success['user'] = $new_user;
             return response()->json(['success' => $success], $this->successStatus);
         }
     }

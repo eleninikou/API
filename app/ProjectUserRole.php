@@ -29,7 +29,7 @@ class ProjectUserRole extends Model
     }
 
     public function tickets() {
-        return $this->belongsTo(Ticket::class, 'project_id', 'project_id');
+        return $this->hasMany(Ticket::class, 'project_id', 'project_id');
     }
 
 }

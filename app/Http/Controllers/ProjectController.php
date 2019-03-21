@@ -21,7 +21,6 @@ class ProjectController extends Controller
     // Show projects created by user
     public function userProjects($id)
     {
-        $user = Auth::user();
         $projects = Project::with('milestones', 'client', 'team', 'creator')->where('creator_id', $id)->get();
         return response()->json(['projects' => $projects ]);
     }
@@ -29,7 +28,6 @@ class ProjectController extends Controller
         // Show projects created by user
     public function activeProjects($id)
     {
-        $user = Auth::user();
         $projects = ProjectUserRole::with('project', 'role', 'tickets')->where('user_id', $id)->get();
         return response()->json(['projects' => $projects ]);
     }
@@ -38,27 +36,35 @@ class ProjectController extends Controller
     // Create project
     public function store(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'description' => 'required',
             'creator_id' => 'required',
-            'client_id' => 'required|numeric'
         ]);
             
         if ($validator->fails()) {
             return response()->json(['error'=>$validator->errors()], 401); 
-
         } else {
-
-            $project = [
+            if (!$request->client_id) {
+                $client_id = 0;
+            } else {
+                $client_id = $request->client_id;
+            }
+                
+            $new_project = Project::create([
                 'name' => $request->name,
                 'description' => $request->description,
                 'creator_id' => $request->creator_id,
-                'client_id' => $request->client_id,
-            ];
-                
-            Project::create($project);
-            return response()->json(['project' => $project, 'message' => 'Project was created']);
+                'client_id' => $client_id,
+            ]);
+
+            $user_role = ProjectUserRole::create([
+                'user_id' => $request->creator_id,
+                'role_id' => 1,
+                'project_id' => $new_project->id
+            ]);
+            return response()->json(['project' => $new_project, 'user role' => $user_role, 'message' => 'Project was created']);
         }
     }
 
@@ -81,7 +87,6 @@ class ProjectController extends Controller
                 'name' => 'required',
                 'description' => 'required',
                 'creator_id' => 'required',
-                'client_id' => 'required',
             ]);
 
             if ($validator->fails()) {
