@@ -31,7 +31,6 @@ class TicketController extends Controller
     public function store(Request $request)
     {
         // TicketAttachment - fix!!
-
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'description' => 'required',
@@ -49,16 +48,7 @@ class TicketController extends Controller
 
         } else {
 
-            // If no assigned user -> make Project creator assigned
-            $project = Project::find($request->project_id);
-
-            if ($request->assigned_user_id == null) {
-                $assigned = $project->creator_id;
-            } else {
-                $assigned = $request->assigned_user_id;
-            }
-
-            $ticket = [
+            $ticket = Ticket::create([
                 'title' => $request->title,
                 'description' => $request->description,
                 'type_id' => $request->type_id,
@@ -67,11 +57,10 @@ class TicketController extends Controller
                 'priority' => $request->priority,
                 'due_date' => $request->due_date,
                 'creator_id' => $request->creator_id,
-                'assigned_user_id' => $assigned,
+                'assigned_user_id' => $request->assigned_user_id,
                 'milestone_id' => $request->milestone_id
-            ];
+            ]);
                 
-            Ticket::create($ticket);
             return response()->json(['ticket' => $ticket, 'message' => 'Ticket was created']);
         }
 

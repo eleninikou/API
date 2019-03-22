@@ -28,6 +28,9 @@ Route::get('tickets/user/{id}/all', 'TicketController@userTickets');
 Route::resource('projects', 'ProjectController')->except(['create', 'edit']);
 Route::resource('types', 'TicketTypeController')->except(['create', 'edit']);
 Route::resource('status', 'TicketStatusController')->except(['create', 'edit']);
+Route::resource('milestones', 'MilestoneController')->except(['create', 'edit']);
+Route::get('milestones/project/{id}', 'MilestoneController@project');
+Route::resource('tickets', 'TicketController')->except(['create', 'edit']);
 
 Route::group(['middleware' => 'auth:api'], function(){
     
@@ -35,10 +38,7 @@ Route::group(['middleware' => 'auth:api'], function(){
     
     Route::post('projects/{id}/invite', 'InviteController@invite');
 
-    Route::get('milestones/project/{id}', 'MilestoneController@project');
 
-    Route::resource('milestones', 'MilestoneController')->except(['create', 'edit']);
-    Route::resource('tickets', 'TicketController')->except(['create', 'edit']);
     Route::resource('roles', 'RoleController')->except(['create', 'edit']);
     Route::resource('users', 'UserController')->except(['create', 'edit']);
 });

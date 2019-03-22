@@ -21,11 +21,11 @@ class ProjectController extends Controller
     // Show projects created by user
     public function userProjects($id)
     {
-        $projects = Project::with('milestones', 'client', 'team', 'creator')->where('creator_id', $id)->get();
+        $projects = Project::with('milestones', 'client', 'creator')->where('creator_id', $id)->get();
         return response()->json(['projects' => $projects ]);
     }
 
-        // Show projects created by user
+    // Show projects created by user
     public function activeProjects($id)
     {
         $projects = ProjectUserRole::with('project', 'role', 'tickets')->where('user_id', $id)->get();
@@ -44,13 +44,13 @@ class ProjectController extends Controller
         ]);
             
         if ($validator->fails()) {
+
             return response()->json(['error'=>$validator->errors()], 401); 
+
         } else {
-            if (!$request->client_id) {
-                $client_id = 0;
-            } else {
-                $client_id = $request->client_id;
-            }
+            
+            if (!$request->client_id) { $client_id = 0;
+            } else { $client_id = $request->client_id; }
                 
             $new_project = Project::create([
                 'name' => $request->name,
@@ -64,6 +64,7 @@ class ProjectController extends Controller
                 'role_id' => 1,
                 'project_id' => $new_project->id
             ]);
+
             return response()->json(['project' => $new_project, 'user role' => $user_role, 'message' => 'Project was created']);
         }
     }
