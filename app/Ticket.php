@@ -28,6 +28,8 @@ class Ticket extends Model
     ];
     
     protected $table = 'tickets';
+    protected $touches = ['project', 'milestone'];
+
 
     public function type() {
         return $this->belongsTo(TicketType::class, 'type_id', 'id');
@@ -63,5 +65,13 @@ class Ticket extends Model
 
     public function userRoles() {
         return $this->belongsTo(ProjectUserRole::class, 'project_id', 'project_id');
+    }
+
+    public static function boot() {
+        parent::boot();
+        static::deleting(function($ticket) { 
+             $ticket->comments()->delete();
+             $ticket->attachments()->delete();
+        });
     }
 }

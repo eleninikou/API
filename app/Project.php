@@ -38,15 +38,12 @@ class Project extends Model
         return $this->hasMany(Milestone::class);
     }
 
-    public function team() {
-        return $this->hasManyThrough(
-            User::class, 
-            ProjectUserRole::class,
-            'user_id',
-            'id'
-        );
+    public static function boot() {
+        parent::boot();
+        static::deleting(function($project) { 
+             $project->userRole()->delete();
+             $project->milestones()->delete();
+             $project->tickets()->delete();
+        });
     }
-
 }
-
-

@@ -15,6 +15,7 @@ class TicketComment extends Model
     ];
     
     protected $table = 'ticket_comments';
+    protected $touches = ['ticket'];
 
     public function ticket() {
         return $this->belongsTo(Ticket::class, 'ticket_id', 'id');

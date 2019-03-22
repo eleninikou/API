@@ -19,9 +19,8 @@ class TicketController extends Controller
 
     public function userTickets($id)
     {
-        $user = Auth::user();
         $tickets = Ticket::with('type', 'status', 'project', 'creator', 'assignedUser', 'milestone', 'attachments', 'comments')
-        ->where('creator_id', 1)
+        ->where('creator_id', $id)
         ->orWhere('assigned_user_id', $id)
         ->get();
 

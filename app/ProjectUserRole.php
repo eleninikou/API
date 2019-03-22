@@ -15,17 +15,18 @@ class ProjectUserRole extends Model
     ];
     
     protected $table = 'project_user_roles';
+    protected $touches = ['project'];
 
     public function user() {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class);
     }
 
     public function role() {
-        return $this->belongsTo(Role::class, 'role_id', 'id');
+        return $this->belongsTo(Role::class);
     }
 
     public function project() {
-        return $this->belongsTo(Project::class, 'project_id', 'id');
+        return $this->belongsTo(Project::class);
     }
 
     public function tickets() {

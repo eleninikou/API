@@ -78,12 +78,26 @@ class User extends Authenticatable
         return $this->hasMany(Ticket::class);
     }
 
-    public function teamMember() {
-        return $this->hasManyThrough(Project::class, ProjectUserRole::class );
+    public function projects() { 
+        return $this->hasManyThrough(
+            Project::class,  
+            ProjectUserRole::class, 
+            'project_id',  // FK on PUR
+            'id', // FK on Project
+            'id',// LK on Users
+            'user_id' // LK on PUR
+        );
     }
 
     public function projectRole() {
         return $this->hasManyThrough(Role::class, ProjectUserRole::class );
+    }
+
+    public static function boot() {
+        parent::boot();
+        static::deleting(function($user) { 
+             $user->projectRole()->delete();
+        });
     }
 
 

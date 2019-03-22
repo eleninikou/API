@@ -72,8 +72,9 @@ class ProjectController extends Controller
     // Show project by id
     public function show($id)
     {
-        $project = Project::with('milestones', 'client', 'creator', 'team')->find($id);
-        return response()->json(['project' => $project]);
+        $project = Project::with('milestones', 'client', 'creator')->find($id);
+        $team = ProjectUserRole::where('project_id', $id)->with('user')->get();
+        return response()->json(['project' => $project, 'team' => $team]);
     }
 
 
@@ -109,14 +110,16 @@ class ProjectController extends Controller
     // Delete project
     public function destroy($id)
     {
-        $user = Auth::user();
         $project = Project::find($id);
-
-        if ($user->id == $project->creator_id) {
-            $project->delete();
-            return response()->json(['message' => 'Projected was deleted']);
+        if ($project) {
+            // if ($user->id == $project->creator_id) {
+                $project->delete();
+                return response()->json(['message' => 'Projected was deleted']);
+            // } else {
+            //     return response()->json(['message' => 'You can only delete the projects that you have created']);
+            // }
         } else {
-            return response()->json(['message' => 'You can only delete the projects that you have created']);
+            return response()->json(['message' => 'Not valid Project id']);
         }
 
     }
