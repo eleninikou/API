@@ -22,7 +22,6 @@ class Kernel extends HttpKernel
         \Barryvdh\Cors\HandleCors::class,
         \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-        \Barryvdh\Cors\HandleCors::class,
     ];
 
     /**
@@ -37,7 +36,7 @@ class Kernel extends HttpKernel
             \Illuminate\Session\Middleware\StartSession::class,
             // \Illuminate\Session\Middleware\AuthenticateSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \App\Http\Middleware\VerifyCsrfToken::class,
+            // \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
 
@@ -45,7 +44,6 @@ class Kernel extends HttpKernel
             'throttle:60,1',
             'bindings',
             'cors'
-
         ],
 
         'cors' => [
@@ -70,7 +68,7 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
+        // 'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
         'cors' => \Barryvdh\Cors\HandleCors::class,
     ];
 

@@ -5,62 +5,75 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Project;
 use App\ProjectUserRole;
+use App\ProjectActivity;
+
 use Validator;
 
-class ProjectController extends Controller
-{
+class ProjectController extends Controller{
 
     // Show all Projects
-    public function index()
-    {
+    public function index() {
         $projects = Project::with('milestones', 'client', 'creator')->get();
         return response()->json(['projects' => $projects ]);
     }
 
-
     // Show projects created by user
-    public function userProjects($id)
-    {
+    public function userProjects($id) {
         $projects = Project::with('milestones', 'client', 'creator')->where('creator_id', $id)->get();
         return response()->json(['projects' => $projects ]);
     }
 
     // Show projects created by user
-    public function activeProjects($id)
-    {
-        $projects = ProjectUserRole::with('project', 'role', 'tickets')->where('user_id', $id)->get();
+    public function activeProjects($id) {
+        $projects = ProjectUserRole::with('project', 'role', 'tickets', 'milestones')->where('user_id', $id)->get();
         return response()->json(['projects' => $projects ]);
+    }
+
+    // Show projects created by user
+    public function team($id) {
+        $team = ProjectUserRole::with('user', 'role')->where('project_id', $id)->get();
+        return response()->json(['team' => $team ]);
     }
 
 
     // Create project
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
 
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'description' => 'required',
-            'creator_id' => 'required',
         ]);
             
         if ($validator->fails()) {
-
             return response()->json(['error'=>$validator->errors()], 401); 
-
         } else {
+            // If project is without client
+            if (!$request->client_id) { 
+                $client_id = 0;
+            } else { 
+                $client_id = $request->client_id; 
+            }
             
-            if (!$request->client_id) { $client_id = 0;
-            } else { $client_id = $request->client_id; }
-                
+            $user = Auth::user();
+
+            // Create project
             $new_project = Project::create([
                 'name' => $request->name,
                 'description' => $request->description,
-                'creator_id' => $request->creator_id,
+                'creator_id' => $user->id,
                 'client_id' => $client_id,
             ]);
 
+            // Save Project Activity
+            $project_activity = ProjectActivity::create([
+                'project_id' => $new_project->id,        
+                'user_id' => $user->id,
+                'type' => 'Created project'
+            ]);
+
+            // Attach user role
             $user_role = ProjectUserRole::create([
-                'user_id' => $request->creator_id,
+                'user_id' => $user->id,
                 'role_id' => 1,
                 'project_id' => $new_project->id
             ]);
@@ -71,24 +84,24 @@ class ProjectController extends Controller
 
 
     // Show project by id
-    public function show($id)
-    {
+    public function show($id) {
         $project = Project::with('milestones', 'client', 'creator')->find($id);
-        $team = ProjectUserRole::where('project_id', $id)->with('user')->get();
+        $team = ProjectUserRole::where('project_id', $id)->with('user', 'role')->get();
         return response()->json(['project' => $project, 'team' => $team]);
     }
 
 
     // Edit project
-    public function update($id, Request $request )
-    {
+    public function update($id, Request $request ) {
+        
         $project = Project::find($id);
-        if ($request->user_id == $project->creator_id) {
+        $user = Auth::user();
+
+        if ($user->id == $project->creator_id) {
 
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'description' => 'required',
-                'creator_id' => 'required',
             ]);
 
             if ($validator->fails()) {
@@ -96,10 +109,17 @@ class ProjectController extends Controller
             } else {
                 $project->name = $request->get('name');
                 $project->description = $request->get('description');
-                $project->creator_id = $request->get('creator_id');
+                $project->creator_id = $user->id;
                 $project->client_id = $request->get('client_id');
                 $project->save();
-                return response()->json(['project' => $project, 'message' => 'Project was updated']);
+                return response()->json(['project' => $project, 'message' => 'The project was updated!']);
+
+                // Save Project Activity
+                $project_activity = ProjectActivity::create([
+                    'project_id' => $id,        
+                    'user_id' => $user->id,
+                    'type' => 'updated project'
+                ]);
             }
         } else {
             return response()->json(['message' => 'You can only update projects that you have created']);
@@ -109,16 +129,16 @@ class ProjectController extends Controller
 
 
     // Delete project
-    public function destroy($id)
-    {
+    public function destroy($id){
         $project = Project::find($id);
+        $user = Auth::user();
         if ($project) {
-            // if ($user->id == $project->creator_id) {
+            if ($user->id == $project->creator_id) {
                 $project->delete();
                 return response()->json(['message' => 'Projected was deleted']);
-            // } else {
-            //     return response()->json(['message' => 'You can only delete the projects that you have created']);
-            // }
+            } else {
+                return response()->json(['message' => 'You can only delete the projects that you have created']);
+            }
         } else {
             return response()->json(['message' => 'Not valid Project id']);
         }

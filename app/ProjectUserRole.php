@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\User;
 use App\Role;
 use App\Project;
+use App\Milestone;
 
 class ProjectUserRole extends Model
 {
@@ -31,6 +32,10 @@ class ProjectUserRole extends Model
 
     public function tickets() {
         return $this->hasMany(Ticket::class, 'project_id', 'project_id');
+    }
+
+    public function milestones() {
+        return $this->hasMany(Milestone::class, 'project_id', 'project_id');
     }
 
 }

@@ -18,7 +18,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Auth::routes();
+Auth::routes();
 
 // Route::get('/redirect', 'Auth\LoginController@redirectToProvider');
 // Route::get('/callback/google', 'Auth\LoginController@handleProviderCallback');

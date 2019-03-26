@@ -14,8 +14,7 @@ use Illuminate\Http\Request;
 class InviteController extends Controller
 {
 
-    public function invite(Request $request, $id)
-    {
+    public function invite(Request $request, $id){
         $project = Project::findOrFail($id);
 
         do { 

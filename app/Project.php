@@ -3,6 +3,7 @@
 namespace App;
 use App\User;
 use App\Milestone;
+use App\ProjectActivity;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -38,12 +39,17 @@ class Project extends Model
         return $this->hasMany(Milestone::class);
     }
 
+    public function activities() {
+        return $this->hasMany(ProjectActivity::class);
+    }
+
     public static function boot() {
         parent::boot();
         static::deleting(function($project) { 
              $project->userRole()->delete();
              $project->milestones()->delete();
              $project->tickets()->delete();
+             $project->activities()->delete();
         });
     }
 }

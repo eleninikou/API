@@ -18,6 +18,11 @@ class PassportController extends Controller
         return Auth::guard('api');
     }
 
+    public function details() 
+    { 
+        $user = Auth::user(); 
+        return response()->json(['success' => $user], $this->successStatus); 
+    } 
 
     public function login(Request $request)
     {

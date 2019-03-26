@@ -6,6 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
+use App\ProjectActivity;
 
 class User extends Authenticatable 
 {
@@ -91,6 +92,10 @@ class User extends Authenticatable
 
     public function projectRole() {
         return $this->hasManyThrough(Role::class, ProjectUserRole::class );
+    }
+
+    public function activities() {
+        return $this->hasMany(ProjectActivity::class);
     }
 
     public static function boot() {
