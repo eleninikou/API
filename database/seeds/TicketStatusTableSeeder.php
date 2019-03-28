@@ -22,7 +22,7 @@ class TicketStatusTableSeeder extends Seeder
             'status' => 'Review',
         ]);
         TicketStatus::create([
-            'status' => 'Done',
+            'status' => 'Completed',
         ]);
         TicketStatus::create([
             'status' => 'On hold',

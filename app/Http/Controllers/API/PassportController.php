@@ -11,21 +11,20 @@ use App\User;
 
 class PassportController extends Controller
 {
-    
     public $successStatus = 200;
-    public function guard()
-    {
+    
+    public function guard() {
         return Auth::guard('api');
     }
 
-    public function details() 
-    { 
+    public function details() { 
         $user = Auth::user(); 
         return response()->json(['success' => $user], $this->successStatus); 
     } 
 
-    public function login(Request $request)
-    {
+
+    
+    public function login(Request $request) {
         // check if they're an existing user
         $existingUser = User::where('email', $request->email)->first();
         if($existingUser){
@@ -37,12 +36,10 @@ class PassportController extends Controller
             return response()->json(["success" => $success]);
         }
         return response()->json(["message" => 'not existing user']);
-
     }
 
 
-    public function register(Request $request)
-    {
+    public function register(Request $request) {
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'email' => 'required|string|max:255',
@@ -53,23 +50,22 @@ class PassportController extends Controller
                 return response()->json(['error'=>$validator->errors()], 401);            
             }
             
-            $user = [ 
+            $reg_user = User::create([ 
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
                 'google_id' => ''
-            
-            ];
-        
-                $reg_user = User::create($user);
-                $success['token'] =  $reg_user->createToken('Success')->accessToken;
-                $success['user'] = $reg_user;
+            ]);
+
+            $success['token'] =  $reg_user->createToken('Success')->accessToken;
+            $success['user'] = $reg_user;
 
         return response()->json(['success'=>$success], $this->successStatus);
     }
 
-    public function logout()
-    {
+
+
+    public function logout() {
         // $accessToken = Auth::user()->token();
         // DB::table('oauth_refresh_tokens')
         //     ->where('access_token_id', $accessToken->id)
@@ -81,14 +77,14 @@ class PassportController extends Controller
         return response()->json(['message' => 'User was logged out.']);
     }
 
-    public function googleAuth(Request $request)
-    {   
+
+
+    public function googleAuth(Request $request) {   
         $GoogleAuth = $request;
         // check if they're an existing user
         $existingUser = User::where('email', $GoogleAuth->email)->first();
 
         if($existingUser){
-            // log them in
             auth()->login($existingUser, true);
             $user = Auth::user();
             $success['token'] =  $user->createToken('Login')->accessToken;

@@ -11,7 +11,8 @@ class ProjectActivity extends Model
     protected $fillable = [
         'project_id',        
         'user_id',
-        'type'
+        'type',
+        'text'
     ];
     
     protected $table = 'project_activities';

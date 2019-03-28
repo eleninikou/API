@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Validator;
 use App\Milestone;
+use App\Ticket;
 use App\Project;
 use App\ProjectActivity;
 
@@ -25,6 +26,7 @@ class MilestoneController extends Controller
     // Create milestone 
     public function store(Request $request) {
 
+        $user = Auth::user();
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'focus' => 'required',
@@ -36,22 +38,22 @@ class MilestoneController extends Controller
             return response()->json(['error'=>$validator->errors()], 401); 
 
         } else {
-
-            $milestone = [
+                
+            $milestone = Milestone::create([
                 'title' => $request->title,
                 'focus' => $request->focus,
                 'project_id' => $request->project_id,
                 'due_date' => $request->due_date,
-            ];
-                
-            Milestone::create($milestone);
+            ]);
             
-            $user = Auth::user();
+            $milestone_id = $milestone->id;
+        
             // Save Project Activity
             $project_activity = ProjectActivity::create([
                'project_id' => $request->project_id,      
                'user_id' => $user->id,
-               'type' => 'Added new milestone'
+               'type' => 'milestone',
+               'text' => '<p>created a new <a href="/home/milestone/'.$milestone_id.'">milestone</a></p>'
             ]);
 
             return response()->json(['milestone' => $milestone, 'message' => 'Milestone was created']);
@@ -64,7 +66,8 @@ class MilestoneController extends Controller
     // Show milestone by id
     public function show($id) {
         $milestone = Milestone::with('project', 'tickets')->find($id);
-        return response()->json(['milestone' => $milestone]);
+        $tickets = Ticket::where('milestone_id', $id)->with('creator', 'assignedUser', 'status', 'type')->get();
+        return response()->json(['milestone' => $milestone, 'tickets' => $tickets]);
     }
 
 
@@ -102,6 +105,7 @@ class MilestoneController extends Controller
 
     // Delete milestone
     public function destroy($id) {
+
         $user = Auth::user();
         $milestone = Milestone::find($id);
         $project = Project::find($milestone->project_id);
@@ -113,5 +117,6 @@ class MilestoneController extends Controller
         } else {
             return response()->json(['message' => 'You can only delete milestones in projects that you have created']);
         }
+
     }
 }

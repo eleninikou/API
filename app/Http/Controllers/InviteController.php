@@ -14,16 +14,15 @@ use Illuminate\Http\Request;
 class InviteController extends Controller
 {
 
-    public function invite(Request $request, $id){
+    public function invite(Request $request, $id) {
         $project = Project::findOrFail($id);
 
         do { 
-            $token = str_random(); // generate random string 
+            $token = str_random(); 
             // $token = Hash::make(str_random());
         } 
 
         // loop through invitations 
-                
         //check if the token already exists and if it does, try again
         while (Invite::where('token', $token)->first());
 
@@ -38,33 +37,26 @@ class InviteController extends Controller
         
             // send the email
             Mail::to($request->get('email'))->send(new Invitation($invitation));
-
-            // redirect back where we came from
-            return redirect()
-                ->back();    
+            return redirect()->back();    
     }
         
-    public function accept($token)
-    {
+    public function accept($token){
         // Look up the invite
         if (!$invite = Invite::where('token', $token)->first()) {
             return response()->json(['message' => 'Seems like you invitation got lost']);
         }
 
-        
         // check if they're an existing user
         $existingUser = User::where('email', $invite->email)->first();        
         if($existingUser){
 
             // Give role in project
-            $user_role = [
+            ProjectUserRole::create([
                 'user_id' => $existingUser->id,
                 'role_id' => $invite->project_role,
                 'project_id' => $invite->project_id,
-            ];
-            
-            ProjectUserRole::create($user_role);
-            
+            ]);
+
             // Log them in
             auth()->login($existingUser, true);
                 $user = Auth::user();
@@ -76,23 +68,20 @@ class InviteController extends Controller
                 return response()->json(['success' => $success, 'message' => 'invitation accepted']);
        
         } else {
-
             $new_user = new User;
             $new_user->name = $user->name;
             $new_user->email = $user->email;
             $new_user->google_id = $user->id;
             $new_user->password = md5(rand(1,10000));
             $new_user->save();
-            
             $user = User::lastInsertedId();
 
-            $new_user_role = [
+            ProjectUserRole::create([
                 'user_id' => $user->id,
                 'role_id' => $invite->project_role,
                 'project_id' => $invite->project_id
-            ];
+            ]);
 
-            ProjectUserRole::create($user_role);
             $invite->delete();
             auth()->login($newUser, true);
 

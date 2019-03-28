@@ -18,6 +18,7 @@ class CreateProjectActivitiesTable extends Migration
             $table->integer('project_id');
             $table->integer('user_id');
             $table->string('type');
+            $table->string('text');
             $table->timestamps();
         });
     }

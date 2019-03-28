@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Ticket;
+use App\TicketStatus;
 use App\Project;
+use App\ProjectActivity;
+
 use Validator;
 
 class TicketController extends Controller
@@ -57,7 +60,21 @@ class TicketController extends Controller
                 'assigned_user_id' => $request->assigned_user_id,
                 'milestone_id' => $request->milestone_id
             ]);
-            return response()->json(['ticket' => $ticket, 'message' => 'Ticket was created']);
+
+            // Save Project Activity
+            $project_activity = ProjectActivity::create([
+                'project_id' => $request->project_id,      
+                'user_id' => $user->id,
+                'type' => 'ticket',
+                'text' => '<p>created a new <a href="/home/ticket/'.$ticket->id.'">ticket</a> :'.$ticket->title.' </p>'
+             ]);
+
+            if ($project_activity) {
+                return response()->json(['ticket' => $ticket, 'message' => 'Ticket was created']);
+            } else {
+                return response()->json(['ticket' => $ticket, 'message' => 'Could not update activity feed']);
+
+            }
         }
 
     }
@@ -73,6 +90,7 @@ class TicketController extends Controller
     public function update(Request $request, $id) {
         // TicketAttachmet - fix!
         $ticket = Ticket::find($id);
+        $ticket_status = TicketStatus::find($ticket->status_id);
         $user = Auth::user();
 
         if ($user->id == $ticket->creator_id) {
@@ -90,6 +108,43 @@ class TicketController extends Controller
             $ticket->save();
             return response()->json(['ticket' => $ticket, 'message' => 'Ticket was updated']);
             
+            // If status has changed
+            if ($ticket_status->id !== $ticket->status_id) {
+                switch ($request->status_id) {
+                    case 1:
+                        $text = '<p>changed status from '.$ticket_status->status.' to "To do" </p>';
+                        break;
+                    case 2:
+                        $text = '<p>changed status from '.$ticket_status->status.' to "In progress" </p>';
+                        break;
+                    case 3:
+                        $text = '<p>changed status from '.$ticket_status->status.' to "Review" </p>';
+                        break;
+                    case 4:
+                        $text = '<p>changed status from '.$ticket_status->status.' to "Completed" </p>';
+                        break;     
+                    case 5:
+                        $text = '<p>changed status from '.$ticket_status->status.' to "On hold" </p>';
+                        break; 
+                    case 6:
+                        $text = '<p>changed status from '.$ticket_status->status.' to "To be discussed" </p>';
+                        break; 
+                    case 7:
+                        $text = '<p>changed status from '.$ticket_status->status.' to "Archived" </p>';
+                        break;                         
+                    default:
+                        return;
+                }
+            }
+
+            // Save Project Activity
+            $project_activity = ProjectActivity::create([
+                'project_id' => $request->project_id,      
+                'user_id' => $user->id,
+                'type' => 'ticket',
+                'text' => $text
+             ]);
+
         } else {
             return response()->json(['message' => 'You cant make any changes on this ticket' ]);
         }

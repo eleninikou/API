@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Project;
+use App\Ticket;
 use App\ProjectUserRole;
 use App\ProjectActivity;
 
@@ -24,8 +25,9 @@ class ProjectController extends Controller{
     }
 
     // Show projects created by user
-    public function activeProjects($id) {
-        $projects = ProjectUserRole::with('project', 'role', 'tickets', 'milestones')->where('user_id', $id)->get();
+    public function activeProjects() {
+        $user = Auth::user();
+        $projects = ProjectUserRole::with('project', 'role', 'tickets', 'milestones')->where('user_id', $user->id)->get();
         return response()->json(['projects' => $projects ]);
     }
 
@@ -64,13 +66,6 @@ class ProjectController extends Controller{
                 'client_id' => $client_id,
             ]);
 
-            // Save Project Activity
-            $project_activity = ProjectActivity::create([
-                'project_id' => $new_project->id,        
-                'user_id' => $user->id,
-                'type' => 'Created project'
-            ]);
-
             // Attach user role
             $user_role = ProjectUserRole::create([
                 'user_id' => $user->id,
@@ -80,14 +75,17 @@ class ProjectController extends Controller{
 
             return response()->json(['project' => $new_project, 'user role' => $user_role, 'message' => 'Project was created']);
         }
+        return response()->json(['message' => 'Something went wrong']);
+
     }
 
 
     // Show project by id
     public function show($id) {
-        $project = Project::with('milestones', 'client', 'creator')->find($id);
+        $project = Project::with('milestones', 'client', 'creator', 'tickets')->find($id);
         $team = ProjectUserRole::where('project_id', $id)->with('user', 'role')->get();
-        return response()->json(['project' => $project, 'team' => $team]);
+        $tickets = Ticket::where('project_id', $id)->with('creator', 'assignedUser', 'status', 'type')->get();
+        return response()->json(['project' => $project, 'team' => $team, 'tickets' => $tickets]);
     }
 
 
