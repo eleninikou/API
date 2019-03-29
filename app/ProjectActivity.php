@@ -25,4 +25,6 @@ class ProjectActivity extends Model
     public function user() {
         return $this->belongsTo(user::class);
     }
+
+    
 }

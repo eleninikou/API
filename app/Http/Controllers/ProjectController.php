@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Project;
 use App\Ticket;
+use App\User;
+use App\Milestone;
 use App\ProjectUserRole;
 use App\ProjectActivity;
 
@@ -28,7 +30,15 @@ class ProjectController extends Controller{
     public function activeProjects() {
         $user = Auth::user();
         $projects = ProjectUserRole::with('project', 'role', 'tickets', 'milestones')->where('user_id', $user->id)->get();
-        return response()->json(['projects' => $projects ]);
+        $project_ids = ProjectUserRole::where('user_id', $user->id)->pluck('project_id');
+        $milestones = [];
+
+        foreach ($project_ids as $id) {
+            $milestone = Milestone::where('project_id', $id)->with('project')->get();
+            array_push($milestones, $milestone);
+        }
+
+        return response()->json(['projects' => $projects, 'milestones' => $milestones ]);
     }
 
     // Show projects created by user

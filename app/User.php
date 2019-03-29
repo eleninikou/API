@@ -90,6 +90,17 @@ class User extends Authenticatable
         );
     }
 
+    public function milestones() { 
+        return $this->hasManyThrough(
+            Milestone::class,  
+            ProjectUserRole::class, 
+            'project_id',  // FK on PUR
+            'project_id', // FK on Milestone
+            'id',// LK on Users
+            'user_id' // LK on PUR
+        );
+    }
+
     public function projectRole() {
         return $this->hasManyThrough(Role::class, ProjectUserRole::class );
     }

@@ -16,7 +16,7 @@ class ProjectActivityController extends Controller
 
     public function projectActivity() {
         $user = Auth::user();
-        $activity = ProjectACtivity::with('project', 'user')->where('user_id', $user->id)->get();
+        $activity = ProjectACtivity::with('project', 'user')->where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
         return response()->json(['activity' => $activity]);
     }
 
