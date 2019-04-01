@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Ticket;
 use App\TicketStatus;
+use App\TicketComment;
 use App\Milestone;
 use App\Project;
 use App\ProjectActivity;
@@ -68,7 +69,7 @@ class TicketController extends Controller
                 'project_id' => $request->project_id,      
                 'user_id' => $user->id,
                 'type' => 'ticket',
-                'text' => '<p>created a new <a href="/home/ticket/'.$ticket->id.'">ticket</a> :'.$ticket->title.' </p>'
+                'text' => '<p>created a new ticket: <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a> </p>'
              ]);
 
             if ($project_activity) {
@@ -83,9 +84,10 @@ class TicketController extends Controller
     // Get ticket by id
     public function show($id) {
         $ticket = Ticket::with('type', 'status', 'project', 'creator', 'assignedUser', 'milestone', 'attachments', 'comments')->find($id);
+        $comments = TIcketComment::where('ticket_id', $ticket->id)->with('user')->orderBy('created_at', 'desc')->get();
         $team = ProjectUserRole::with('user', 'role')->where('project_id', $ticket->project_id)->get();
         $milestones = Milestone::where('project_id', $ticket->project_id)->get();
-        return response()->json(['ticket' => $ticket, 'team' => $team, 'milestones' => $milestones ]);
+        return response()->json(['ticket' => $ticket, 'team' => $team, 'milestones' => $milestones, 'comments' => $comments]);
     }
 
 

@@ -22,10 +22,10 @@ Route::post('google', 'API\PassportController@googleAuth');
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('logout','API\PassportController@logout'); 
 
-    Route::resource('projects', 'ProjectController')->except(['create', 'edit']);
     Route::get('projects/user/all', 'ProjectController@activeProjects');
-    Route::get('projects/user/{id}', 'ProjectController@userProjects');
+    Route::get('projects/user', 'ProjectController@userProjects');
     Route::get('projects/team/{id}', 'ProjectController@team');
+    Route::resource('projects', 'ProjectController')->except(['create', 'edit']);
     
     Route::post('projects/{id}/invite', 'InviteController@invite');
     Route::get('accept/{token}', 'InviteController@accept'); 
@@ -33,16 +33,16 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('tickets/user', 'TicketController@userTickets');
     Route::resource('tickets', 'TicketController')->except(['create', 'edit']);
     
+    Route::resource('comments', 'CommentController')->except(['edit']);
+
     Route::resource('types', 'TicketTypeController')->except(['create', 'edit']);
     Route::resource('status', 'TicketStatusController')->except(['create', 'edit']);
     
     Route::get('milestones/project/{id}', 'MilestoneController@project');
-    Route::resource('milestones', 'MilestoneController');
+    Route::resource('milestones', 'MilestoneController')->except(['create', 'edit']);
+
     Route::resource('roles', 'RoleController')->except(['create', 'edit']);
-
     Route::get('user', 'API\PassportController@details');
-    Route::resource('users', 'UserController')->except(['create', 'edit']);
-
     Route::resource('users', 'UserController')->except(['create', 'edit']);
 
     Route::get('activity/user', 'ProjectActivityController@projectActivity');

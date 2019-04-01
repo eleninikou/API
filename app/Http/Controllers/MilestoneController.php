@@ -53,7 +53,7 @@ class MilestoneController extends Controller
                'project_id' => $request->project_id,      
                'user_id' => $user->id,
                'type' => 'milestone',
-               'text' => '<p>created a new <a href="/home/milestone/'.$milestone_id.'">milestone</a></p>'
+               'text' => '<p>created a new milestone: <a href="/home/milestone/'.$milestone_id.'">'.$request->title.'</a></p>'
             ]);
 
             return response()->json(['milestone' => $milestone, 'message' => 'Milestone was created']);

@@ -11,16 +11,14 @@
     {
 
         // Get all users
-        public function index()
-        {
+        public function index() {
             $users = User::get();
             return response()->json(['users' => $users ]);
         }
 
 
         // Get users by id
-        public function show($id)
-        {
+        public function show($id) {
             $user = User::find($id);
             return response()->json(['user' => $user]);
         }

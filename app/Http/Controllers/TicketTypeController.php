@@ -49,7 +49,6 @@ class TicketTypeController extends Controller
     public function update(Request $request, $id)
     {
         $type = TicketType::find($id);
-
         $validator = Validator::make($request->all(), [
             'type' => 'required',
         ]);

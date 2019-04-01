@@ -21,9 +21,10 @@ class ProjectController extends Controller{
     }
 
     // Show projects created by user
-    public function userProjects($id) {
-        $projects = Project::with('milestones', 'client', 'creator')->where('creator_id', $id)->get();
-        return response()->json(['projects' => $projects ]);
+    public function userProjects() {
+        $user = Auth::user();
+        $projects = Project::with('milestones', 'client', 'creator')->where('creator_id', $user->id)->get();
+        return response()->json(['projects' => $projects]);
     }
 
     // Show projects created by user
