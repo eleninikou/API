@@ -18,7 +18,6 @@ Route::post('google', 'API\PassportController@googleAuth');
 
 
 
-
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('logout','API\PassportController@logout'); 
 
