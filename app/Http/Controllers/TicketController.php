@@ -34,8 +34,9 @@ class TicketController extends Controller
     // Create ticket
     public function store(Request $request) {
         $user = Auth::user();
+        // Save wysiwyg array as string
+        $description = serialize($request->description);
 
-        // TicketAttachment - fix!!
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'description' => 'required',
@@ -53,7 +54,7 @@ class TicketController extends Controller
         } else {
             $ticket = Ticket::create([
                 'title' => $request->title,
-                'description' => $request->description,
+                'description' => $description,
                 'type_id' => $request->type_id,
                 'status_id' => $request->status_id,
                 'project_id' => $request->project_id,
@@ -78,16 +79,31 @@ class TicketController extends Controller
                 return response()->json(['ticket' => $ticket, 'message' => 'Could not update activity feed']);
             }
         }
+        return response()->json(['error' => 'Could not create ticket']);
 
     }
 
     // Get ticket by id
     public function show($id) {
         $ticket = Ticket::with('type', 'status', 'project', 'creator', 'assignedUser', 'milestone', 'attachments', 'comments')->find($id);
-        $comments = TIcketComment::where('ticket_id', $ticket->id)->with('user')->orderBy('created_at', 'desc')->get();
+        $get_comments = TicketComment::where('ticket_id', $ticket->id)->with('user')->orderBy('created_at', 'desc')->get();
+
+        $comments = [];
+        foreach($get_comments as $the_comment) {
+            $comment = [
+                'ticket_id' => $the_comment->ticket_id,
+                'user_id' => $the_comment->user_id,
+                'user' => $the_comment->user,
+                'comment' => unserialize($the_comment->comment),
+                'created_at' => $the_comment->created_at
+            ];
+            array_push($comments, $comment);
+            
+        }
         $team = ProjectUserRole::with('user', 'role')->where('project_id', $ticket->project_id)->get();
         $milestones = Milestone::where('project_id', $ticket->project_id)->get();
-        return response()->json(['ticket' => $ticket, 'team' => $team, 'milestones' => $milestones, 'comments' => $comments]);
+        return response()->json(['ticket' => $ticket, 'description' => unserialize($ticket->description), 'team' => $team, 'milestones' => $milestones, 'comments' => $comments]);
+
     }
 
 
@@ -97,10 +113,11 @@ class TicketController extends Controller
         $ticket = Ticket::find($id);
         $ticket_status = TicketStatus::find($ticket->status_id);
         $user = Auth::user();
+        $description = serialize($request->description);
 
         if ($user->id == $ticket->creator_id) {
             $ticket->title = $request->title;
-            $ticket->description = $request->description;
+            $ticket->description = $description;
             $ticket->type_id = $request->type_id;
             $ticket->status_id = $request->status_id;
             $ticket->project_id = $request->project_id;
@@ -116,40 +133,41 @@ class TicketController extends Controller
             if ($ticket_status->id !== $ticket->status_id) {
                 switch ($request->status_id) {
                     case 1:
-                    $text = '<p>changed status on <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a> from "'.$ticket_status->status.'" to "To do" </p>';
+                        $text = '<p>changed status on <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a> from "'.$ticket_status->status.'" to "To do" </p>';
                     break;
                     case 2:
-                    $text = '<p>changed status on <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a> from "'.$ticket_status->status.'" to "In progress" </p>';
+                        $text = '<p>changed status on <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a> from "'.$ticket_status->status.'" to "In progress" </p>';
                     break;
                     case 3:
-                    $text = '<p>changed status on <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a> from "'.$ticket_status->status.'" to "Review" </p>';
+                        $text = '<p>changed status on <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a> from "'.$ticket_status->status.'" to "Review" </p>';
                     break;
                     case 4:
-                    $text = '<p>changed status on <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a> from "'.$ticket_status->status.'" to "Completed" </p>';
+                        $text = '<p>changed status on <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a> from "'.$ticket_status->status.'" to "Completed" </p>';
                     break;     
                     case 5:
-                    $text = '<p>changed status on <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a> from "'.$ticket_status->status.'" to "On hold" </p>';
+                        $text = '<p>changed status on <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a> from "'.$ticket_status->status.'" to "On hold" </p>';
                     break; 
                     case 6:
-                    $text = '<p>changed status on <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a> from "'.$ticket_status->status.'" to "To be discussed" </p>';
+                        $text = '<p>changed status on <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a> from "'.$ticket_status->status.'" to "To be discussed" </p>';
                     break; 
                     case 7:
-                    $text = '<p>changed status on <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a> from "'.$ticket_status->status.'" to "Archived" </p>';
+                        $text = '<p>changed status on <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a> from "'.$ticket_status->status.'" to "Archived" </p>';
                     break;                         
                     default:
-                    return;
+                        return;
                 }
+
+                // Save Project Activity
+                $project_activity = ProjectActivity::create([
+                    'project_id' => $request->project_id,      
+                    'user_id' => $user->id,
+                    'type' => 'ticket',
+                    'text' => $text
+                    ]);
             }
             
-            // Save Project Activity
-            $project_activity = ProjectActivity::create([
-                'project_id' => $request->project_id,      
-                'user_id' => $user->id,
-                'type' => 'ticket',
-                'text' => $text
-                ]);
 
-            return response()->json(['ticket' => $ticket, 'message' => 'Ticket was updated', 'text' => $text]);
+            return response()->json(['ticket' => $ticket, 'message' => 'Ticket was updated']);
                 
         } else {
             return response()->json(['message' => 'You cant make any changes on this ticket' ]);

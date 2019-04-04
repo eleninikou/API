@@ -13,6 +13,10 @@ class TicketComment extends Model
         'user_id',
         'comment'
     ];
+
+      protected $casts = [
+        'array' => 'array', // Will convert to (Array)
+    ];
     
     protected $table = 'ticket_comments';
     protected $touches = ['ticket'];

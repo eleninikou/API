@@ -42,9 +42,11 @@ class CommentController extends Controller
             return response()->json(['error'=>$validator->errors()], 401); 
 
         } else {
+
+            $comment = serialize($request->comment);
                 
             $comment = TicketComment::create([
-                'comment' => $request->comment,
+                'comment' => $comment,
                 'ticket_id' => $request->ticket_id,
                 'user_id' => $user->id,
             ]);
@@ -52,7 +54,6 @@ class CommentController extends Controller
             $comment_id = $comment->id;
             $ticket = Ticket::find($request->ticket_id);
 
-            
             // Save Project Activity
             $project_activity = ProjectActivity::create([
                'project_id' => $ticket->project_id,      

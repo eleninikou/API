@@ -17,7 +17,7 @@ class CreateTicketCommentsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('ticket_id');
             $table->integer('user_id');
-            $table->text('comment');
+            $table->longText('comment');
             $table->timestamps();
         });
     }
