@@ -103,14 +103,16 @@ class CommentController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
+        $user = Auth::user();
+        $comment = TicketComment::find($id);
+
+        if ($user->id == $comment->user_id) {
+            $comment->delete();
+            return response()->json(['message' => 'Comment was deleted']);
+        } else {
+            return response()->json(['message' => 'You can only delete your own comments']);
+        }
     }
 }

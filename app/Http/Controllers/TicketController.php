@@ -91,6 +91,7 @@ class TicketController extends Controller
         $comments = [];
         foreach($get_comments as $the_comment) {
             $comment = [
+                'id' => $the_comment->id,
                 'ticket_id' => $the_comment->ticket_id,
                 'user_id' => $the_comment->user_id,
                 'user' => $the_comment->user,
