@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use App\Ticket;
 use App\TicketStatus;
@@ -116,7 +118,7 @@ class TicketController extends Controller
         $user = Auth::user();
         $description = serialize($request->description);
 
-        if ($user->id == $ticket->creator_id) {
+        if ($user->id == ($ticket->creator_id || $ticket->assigned_user_id)) {
             $ticket->title = $request->title;
             $ticket->description = $description;
             $ticket->type_id = $request->type_id;
@@ -202,4 +204,29 @@ class TicketController extends Controller
             return response()->json(['message' => 'You can only delete your own tickets']);
         }
     }
+
+
+
+    public function saveImage(Request $request){
+
+        $image = $request->file;
+        $input['imagename'] = time() . '.' . $image->getClientOriginalExtension();
+        $destination_path = public_path('/uploads');
+        $image->move($destination_path, $input['imagename']);
+
+        // Storage::disk('local')->put($input['imagename'], $image);
+
+
+        $url = Storage::url($input['imagename']);
+
+        if ($url) {
+            return response()->json(['url' => $url]);
+        } else {
+            return response()->json(['message', 'could not get url']);
+        }
+
+        return response()->json(['image', $image]);
+
+    }
+
 }

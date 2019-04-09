@@ -3,6 +3,7 @@
 namespace App;
 use App\User;
 use App\Milestone;
+use App\Ticket;
 use App\ProjectActivity;
 
 use Illuminate\Database\Eloquent\Model;
@@ -36,7 +37,7 @@ class Project extends Model
     }
 
     public function tickets() {
-        return $this->hasMany(Milestone::class);
+        return $this->hasMany(Ticket::class);
     }
 
     public function activities() {

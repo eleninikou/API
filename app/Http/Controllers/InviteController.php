@@ -85,4 +85,10 @@ class InviteController extends Controller
         }
 
     }
+
+    // Get all milestones
+    public function usersInvited($id) {
+        $emails = Invite::where('project_id', $id)->pluck('email');
+        return response()->json(['emails' => $emails]);
+    }
 }

@@ -62,7 +62,7 @@ class CommentController extends Controller
                'text' => '<p> Commented on ticket: <a href="/home/ticket/'.$ticket->id.'">'.$ticket->title.'</a></p>'
             ]);
 
-            return response()->json(['comment' => $comment, 'message' => 'Comment was created']);
+            return response()->json(['comment' => $comment, 'message' => 'Your comment is published!']);
         }
 
         return response()->json(['message' => 'Could not create comment']);
@@ -110,7 +110,7 @@ class CommentController extends Controller
 
         if ($user->id == $comment->user_id) {
             $comment->delete();
-            return response()->json(['message' => 'Comment was deleted']);
+            return response()->json(['message' => 'Your comment was deleted!']);
         } else {
             return response()->json(['message' => 'You can only delete your own comments']);
         }

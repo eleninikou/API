@@ -31,7 +31,7 @@ class PassportController extends Controller
             // log them in
             auth()->login($existingUser, true);
             $user = Auth::user();
-            $success['token'] = $existingUser->createToken('Login')->accessToken;
+            $success['token'] = $existingUser->createToken('Success')->accessToken;
             $success['user'] = $existingUser;
             return response()->json(["success" => $success]);
         }
