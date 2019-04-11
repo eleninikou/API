@@ -14,8 +14,9 @@
 Route::post('login', 'API\PassportController@login');
 Route::post('register', 'API\PassportController@register');
 Route::post('google', 'API\PassportController@googleAuth');
+Route::get('accept/{token}', 'InviteController@accept'); 
+Route::get('invitation/{token}', 'InviteController@getEmail'); 
 
-// http://localhost/storage/file.txt
 
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('logout','API\PassportController@logout'); 
@@ -27,8 +28,7 @@ Route::group(['middleware' => 'auth:api'], function(){
     
     Route::post('projects/{id}/invite', 'InviteController@invite');
     Route::get('projects/{id}/invited', 'InviteController@usersInvited'); 
-    Route::get('accept/{token}', 'InviteController@accept'); 
-    
+
     Route::get('tickets/user', 'TicketController@userTickets');
     Route::post('tickets/image', 'TicketController@saveImage');
     Route::resource('tickets', 'TicketController')->except(['create', 'edit']);

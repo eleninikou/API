@@ -210,17 +210,23 @@ class TicketController extends Controller
     public function saveImage(Request $request){
 
         $image = $request->file;
-        $input['imagename'] = time() . '.' . $image->getClientOriginalExtension();
-        $destination_path = public_path('/uploads');
-        $image->move($destination_path, $input['imagename']);
+        // $input['imagename'] = time() . '.' . $image->getClientOriginalExtension();
+        $input['imagename'] = time();
+        $name = $image->getClientOriginalName();
 
-        // Storage::disk('local')->put($input['imagename'], $image);
+        // $destination_path = public_path('/uploads');
+        // $image->move($destination_path, $input['imagename']);
+
+        $url = Storage::disk('uploads')->put('/', $image);
+        
 
 
-        $url = Storage::url($input['imagename']);
+        // $url = Storage::url($input['imagename']);
 
         if ($url) {
-            return response()->json(['url' => $url]);
+            // return response()->json(['url' => 'http://127.0.0.1:8000/api/public'.$url]);
+            return response()->json(['url' => '/storage/'.$url]);
+
         } else {
             return response()->json(['message', 'could not get url']);
         }

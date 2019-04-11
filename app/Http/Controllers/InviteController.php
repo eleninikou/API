@@ -64,31 +64,55 @@ class InviteController extends Controller
                 return response()->json(['success' => $success, 'message' => 'invitation accepted']);
        
         } else {
-            $new_user = new User;
-            $new_user->name = $user->name;
-            $new_user->email = $user->email;
-            $new_user->google_id = $user->id;
-            $new_user->password = md5(rand(1,10000));
-            $new_user->save();
-            $user = User::lastInsertedId();
+            // $new_user = new User;
+            // $new_user->name = $user->name;
+            // $new_user->email = $user->email;
+            // $new_user->google_id = $user->id;
+            // $new_user->password = md5(rand(1,10000));
+            // $new_user->save();
+            // $user = User::lastInsertedId();
 
-            ProjectUserRole::create([
-                'user_id' => $user->id,
-                'role_id' => $invite->project_role,
-                'project_id' => $invite->project_id
-            ]);
+            // ProjectUserRole::create([
+            //     'user_id' => $user->id,
+            //     'role_id' => $invite->project_role,
+            //     'project_id' => $invite->project_id
+            // ]);
 
-            $invite->delete();
-            auth()->login($newUser, true);
+            // $invite->delete();
+            // auth()->login($newUser, true);
+            return response()->json([ 'message' => 'You need to register']);
 
-            return response()->json(['message' => 'invitation accepted']);
+
+            // return response()->json(['message' => 'invitation accepted']);
         }
 
     }
 
-    // Get all milestones
+    
     public function usersInvited($id) {
         $emails = Invite::where('project_id', $id)->pluck('email');
         return response()->json(['emails' => $emails]);
+    }
+
+
+    // Get email
+    public function getEmail($token) {
+
+        $email= Invite::where('token', $token)->pluck('email');
+
+        if($email) {
+            $existingUser = User::where('email', $email)->first();
+    
+            if ($existingUser) {
+                $existing = true;
+            } else {
+                $existing = false;
+            }
+            
+            return response()->json(['email' => $email, 'existing' => $existing ]);
+        }
+
+        return response()->json(['message' => 'Your invitation expired' ]);
+
     }
 }

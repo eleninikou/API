@@ -1,9 +1,11 @@
 @component('mail::message')
-# You have been invited to join the project: {{ $invitation->project_name }}
+
+# Hi, You are invited to join our team!
+## Just click on the button below and follow the steps to start working on the project: {{ $invitation->project_name }}!
 
 
-@component('mail::button', ['url' => '/accept/'.$invitation->token , 'color' => 'success'])
-Join Team
+@component('mail::button', ['url' => 'http://localhost:3000/accept/'.$invitation->token , 'color' => 'success'])
+    Accept invitation
 @endcomponent
 
 @endcomponent
