@@ -30,7 +30,7 @@ class ProjectController extends Controller{
     // Show projects created by user
     public function activeProjects() {
         $user = Auth::user();
-        $projects = ProjectUserRole::with('project', 'role', 'tickets', 'milestones')->where('user_id', $user->id)->get();
+        $projects = ProjectUserRole::with('project', 'role', 'tickets', 'milestones')->where('user_id', $user->id)->distinct('project')->get();
         $project_ids = ProjectUserRole::where('user_id', $user->id)->pluck('project_id');
         $milestones = [];
 
@@ -94,7 +94,7 @@ class ProjectController extends Controller{
     // Show project by id
     public function show($id) {
         $project = Project::with('milestones', 'client', 'creator', 'tickets')->find($id);
-        $team = ProjectUserRole::where('project_id', $id)->with('user', 'role')->get();
+        $team = ProjectUserRole::distinct()->where('project_id', $id)->with('user', 'role')->distinct('user')->get();
         $tickets = Ticket::where('project_id', $id)->with('creator', 'assignedUser', 'status', 'type')->get();
         return response()->json(['project' => $project, 'team' => $team, 'tickets' => $tickets]);
     }
@@ -150,6 +150,26 @@ class ProjectController extends Controller{
             }
         } else {
             return response()->json(['message' => 'Not valid Project id']);
+        }
+
+    }
+
+
+    public function removeUser($id){
+
+        $role = ProjectUserRole::find($id);
+        $project = Project::find($role->project_id);
+        $user = Auth::user();
+
+        if ($user) {
+            if ($user->id == $project->creator_id) {
+                $role->delete();
+                return response()->json(['message' => 'Team member was removed']);
+            } else {
+                return response()->json(['message' => 'Could not remove user from team']);
+            }
+        } else {
+            return response()->json(['message' => 'You can only remove user if you are admin']);
         }
 
     }

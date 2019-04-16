@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\TicketAttachment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use App\TicketAttachment;
 
 class TicketAttachmentController extends Controller
 {
@@ -35,7 +36,22 @@ class TicketAttachmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $image = $request->file;
+        $input['imagename'] = time();
+        $name = $image->getClientOriginalName();
+
+
+        $url = Storage::disk('uploads')->put('/', $image);
+        
+        if ($url) {
+            return response()->json(['url' => '/storage/'.$url]);
+        } else {
+            return response()->json(['message', 'could not get url']);
+        }
+
+        return response()->json(['image', $image]);
+
     }
 
     /**
@@ -78,8 +94,19 @@ class TicketAttachmentController extends Controller
      * @param  \App\TicketAttachment  $ticketAttachment
      * @return \Illuminate\Http\Response
      */
-    public function destroy(TicketAttachment $ticketAttachment)
+    public function destroy(Request $request)
     {
-        //
+        $image = TicketAttachment::where('attachment', $request);
+        $id = TicketAttachment::where('attachment', $request)->pluck('ticket_id');
+        $rest = TicketAttachment::where('ticket_id', $id);
+        if ($image) {
+            $image->delete();
+            return response()->json(['message' => 'Image is deleted', 'images' => $rest]);
+        } else {
+            return response()->json(['message' => 'error', $request]);
+
+        }
+ 
+
     }
 }

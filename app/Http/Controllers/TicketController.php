@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Ticket;
 use App\TicketStatus;
 use App\TicketComment;
+use App\TicketAttachment;
 use App\Milestone;
 use App\Project;
 use App\ProjectActivity;
@@ -67,6 +68,11 @@ class TicketController extends Controller
                 'milestone_id' => $request->milestone_id
             ]);
 
+            $image = TicketAttachment::create([
+                'ticket_id' => $ticket->id,
+                'attachment' => $request->image_urls
+            ]);
+
             // Save Project Activity
             $project_activity = ProjectActivity::create([
                 'project_id' => $request->project_id,      
@@ -105,7 +111,15 @@ class TicketController extends Controller
         }
         $team = ProjectUserRole::with('user', 'role')->where('project_id', $ticket->project_id)->get();
         $milestones = Milestone::where('project_id', $ticket->project_id)->get();
-        return response()->json(['ticket' => $ticket, 'description' => unserialize($ticket->description), 'team' => $team, 'milestones' => $milestones, 'comments' => $comments]);
+        $images = TicketAttachment::where('ticket_id', $id)->get();
+        return response()->json([
+            'ticket' => $ticket, 
+            'description' => unserialize($ticket->description), 
+            'team' => $team, 
+            'milestones' => $milestones, 
+            'comments' => $comments,
+            'images' => $images
+            ]);
 
     }
 
@@ -206,33 +220,12 @@ class TicketController extends Controller
     }
 
 
+        // delete ticket
+        public function storageRemove(Request $request)
+        {
+            $name = basename($request);
+            Storage::delete('/public/'.substr_replace($name,"",-1));
+            return response()->json(['message' => substr_replace($name,"", -1)]);
 
-    public function saveImage(Request $request){
-
-        $image = $request->file;
-        // $input['imagename'] = time() . '.' . $image->getClientOriginalExtension();
-        $input['imagename'] = time();
-        $name = $image->getClientOriginalName();
-
-        // $destination_path = public_path('/uploads');
-        // $image->move($destination_path, $input['imagename']);
-
-        $url = Storage::disk('uploads')->put('/', $image);
-        
-
-
-        // $url = Storage::url($input['imagename']);
-
-        if ($url) {
-            // return response()->json(['url' => 'http://127.0.0.1:8000/api/public'.$url]);
-            return response()->json(['url' => '/storage/'.$url]);
-
-        } else {
-            return response()->json(['message', 'could not get url']);
         }
-
-        return response()->json(['image', $image]);
-
-    }
-
 }

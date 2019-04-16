@@ -23,6 +23,7 @@ Route::group(['middleware' => 'auth:api'], function(){
 
     Route::get('projects/user/all', 'ProjectController@activeProjects');
     Route::get('projects/user', 'ProjectController@userProjects');
+    Route::delete('projects/team/user/{id}', 'ProjectController@removeUser');
     Route::get('projects/team/{id}', 'ProjectController@team');
     Route::resource('projects', 'ProjectController')->except(['create', 'edit']);
     
@@ -30,7 +31,9 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('projects/{id}/invited', 'InviteController@usersInvited'); 
 
     Route::get('tickets/user', 'TicketController@userTickets');
-    Route::post('tickets/image', 'TicketController@saveImage');
+    Route::delete('tickets/image', 'TicketAttachmentController@destroy');
+    Route::post('tickets/image', 'TicketAttachmentController@store');
+    Route::delete('tickets/storage', 'TicketController@storageRemove');
     Route::resource('tickets', 'TicketController')->except(['create', 'edit']);
     
     Route::resource('comments', 'CommentController')->except(['edit']);
