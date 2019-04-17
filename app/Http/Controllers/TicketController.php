@@ -38,6 +38,7 @@ class TicketController extends Controller
     // Create ticket
     public function store(Request $request) {
         $user = Auth::user();
+
         // Save wysiwyg array as string
         $description = serialize($request->description);
 
@@ -112,8 +113,8 @@ class TicketController extends Controller
                 'images' => $images
             ];
             array_push($comments, $comment);
-            
         }
+
         $team = ProjectUserRole::with('user', 'role')->where('project_id', $ticket->project_id)->get();
         $milestones = Milestone::where('project_id', $ticket->project_id)->get();
         $images = TicketAttachment::where('ticket_id', $id)->get();
@@ -125,7 +126,6 @@ class TicketController extends Controller
             'comments' => $comments,
             'images' => $images
             ]);
-
     }
 
 
@@ -135,6 +135,7 @@ class TicketController extends Controller
         $ticket = Ticket::find($id);
         $ticket_status = TicketStatus::find($ticket->status_id);
         $user = Auth::user();
+
         $description = serialize($request->description);
 
         if ($user->id == ($ticket->creator_id || $ticket->assigned_user_id)) {
@@ -150,7 +151,7 @@ class TicketController extends Controller
             $ticket->milestone_id = $request->milestone_id;
 
             foreach($request->image_urls as $url) {
-                TicketAttachment::create([
+                TicketAttachment::firstOrNew([
                     'ticket_id' => $ticket->id,
                     'attachment' => $url
                 ]);
