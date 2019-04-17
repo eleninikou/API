@@ -1,13 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Validator;
-
-use Illuminate\Http\Request;
+use App\Ticket;
 use App\TicketComment;
 use App\ProjectActivity;
-use App\Ticket;
+use App\CommentAttachment;
 
 class CommentController extends Controller
 {
@@ -23,12 +23,7 @@ class CommentController extends Controller
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -51,6 +46,14 @@ class CommentController extends Controller
                 'user_id' => $user->id,
             ]);
             
+            $urls = $request->images;
+            foreach($urls as $url) {
+                CommentAttachment::create([
+                    'comment_id' => $comment->id,
+                    'attachment' => $url
+                ]);
+            }
+
             $comment_id = $comment->id;
             $ticket = Ticket::find($request->ticket_id);
 
@@ -69,35 +72,19 @@ class CommentController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, $id)
     {
         //

@@ -94,11 +94,11 @@ class TicketAttachmentController extends Controller
      * @param  \App\TicketAttachment  $ticketAttachment
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy($id)
     {
-        $image = TicketAttachment::where('attachment', $request);
-        $id = TicketAttachment::where('attachment', $request)->pluck('ticket_id');
-        $rest = TicketAttachment::where('ticket_id', $id);
+        $image = TicketAttachment::find($id);
+        $ticket_id = TicketAttachment::find($id)->pluck('ticket_id');
+        $rest = TicketAttachment::where('ticket_id', $ticket_id);
         if ($image) {
             $image->delete();
             return response()->json(['message' => 'Image is deleted', 'images' => $rest]);

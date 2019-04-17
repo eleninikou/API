@@ -31,7 +31,7 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('projects/{id}/invited', 'InviteController@usersInvited'); 
 
     Route::get('tickets/user', 'TicketController@userTickets');
-    Route::delete('tickets/image', 'TicketAttachmentController@destroy');
+    Route::delete('tickets/image/{id}', 'TicketAttachmentController@destroy');
     Route::post('tickets/image', 'TicketAttachmentController@store');
     Route::delete('tickets/storage', 'TicketController@storageRemove');
     Route::resource('tickets', 'TicketController')->except(['create', 'edit']);

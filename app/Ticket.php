@@ -5,6 +5,7 @@ use App\Project;
 use App\TicketState;
 use App\TicketType;
 use App\TicketAttachment;
+use App\CommentAttachment;
 use App\TicketComment;
 use App\User;
 use App\Milestone;
