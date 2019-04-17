@@ -212,10 +212,33 @@ class TicketController extends Controller
         $ticket = Ticket::find($id);
         $ticket_title = $ticket->title;
         $project = Project::find($ticket->project_id);
+        $comments = TicketComment::where('ticket_id', $id)->pluck('id');
 
         if (($user->id == $ticket->creator_id) || ($user->id == $project->creator_id)) {
+
+            // Remove all images from storage
+            $images = TicketAttachment::where('ticket_id', $id)->pluck('attachment');
+            foreach($images as $image) {
+                $name = basename($image);
+                Storage::delete('/public/'.$name);
+            }
+
+            // Delete ticket attachments, comments and ticket
             $ticket->attachments()->delete();    
-            $ticket->delete();
+
+                // Delete comment attachments and images from storage
+                foreach($comments as $comment) {
+                    $images = CommentAttachment::where('comment_id', $comment)->get();
+    
+                    // Delete images from storage
+                    foreach($images as $image) {
+                        $name = basename($image->attachment);
+                        Storage::delete('/public/'.$name);
+                        $image->delete();
+                    }
+                }
+                $ticket->comments()->delete();
+                $ticket->delete();
 
             // Save Project Activity
             $project_activity = ProjectActivity::create([
@@ -232,12 +255,11 @@ class TicketController extends Controller
     }
 
 
-        // delete ticket
+        // Remove image from storage
         public function storageRemove(Request $request)
         {
             $name = basename($request);
             Storage::delete('/public/'.substr_replace($name,"",-1));
             return response()->json(['message' => substr_replace($name,"", -1)]);
-
         }
 }

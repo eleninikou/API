@@ -30,9 +30,7 @@ class Ticket extends Model
     
     protected $table = 'tickets';
     protected $touches = ['project', 'milestone'];
-    // protected $casts = [
-    //     'options' => 'array', // Will convert to (Array)
-    // ];
+
 
     public function type() {
         return $this->belongsTo(TicketType::class, 'type_id', 'id');

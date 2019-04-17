@@ -2,6 +2,7 @@
 
 namespace App;
 use App\Ticket;
+use App\CommentAttachment;
 use App\User;
 
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +31,14 @@ class TicketComment extends Model
     }
 
     public function attachments() {
-        return $this->hasMany(CommentAttachment::class, 'id', 'comment_id');
+        return $this->hasMany(CommentAttachment::class, 'id', 'ticket_id');
+    }
+
+
+    public static function boot() {
+        parent::boot();
+        static::deleting(function($comment) { 
+             $comment->attachments()->delete();
+        });
     }
 }
