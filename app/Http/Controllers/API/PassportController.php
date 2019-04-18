@@ -66,14 +66,6 @@ class PassportController extends Controller
 
 
     public function logout() {
-        // $accessToken = Auth::user()->token();
-        // DB::table('oauth_refresh_tokens')
-        //     ->where('access_token_id', $accessToken->id)
-        //     ->update([
-        //         'revoked' => true
-        //     ]);
-
-        // $accessToken->revoke();
         return response()->json(['message' => 'User was logged out.']);
     }
 
@@ -95,6 +87,7 @@ class PassportController extends Controller
             $new_user->name = $GoogleAuth->name;
             $new_user->email = $GoogleAuth->email;
             $new_user->google_id = $GoogleAuth->googleId;
+            $new_user->avatar = $GoogleAuth->imageUrl;
             $new_user->password = md5(rand(1,10000));
             $new_user->save();
             

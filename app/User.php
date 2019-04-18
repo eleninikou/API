@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'google_id',
         'password', 
+        'avatar'
     ];
 
     /**
@@ -102,7 +103,14 @@ class User extends Authenticatable
     }
 
     public function projectRole() {
-        return $this->hasManyThrough(Role::class, ProjectUserRole::class );
+        return $this->hasManyThrough(
+            Role::class, 
+            ProjectUserRole::class,
+            'role_id',
+            'id',
+            'id',
+            'user_id' 
+        );
     }
 
     public function activities() {

@@ -53,6 +53,12 @@ class InviteController extends Controller
                 'project_id' => $invite->project_id,
             ]);
 
+            if($invite->project_role === 3) {
+                $project = Project::find($invite->project_id);
+                $project->client_id = $existingUser->id;
+                $project->save();
+            }
+
             // Log them in
             auth()->login($existingUser, true);
                 $user = Auth::user();

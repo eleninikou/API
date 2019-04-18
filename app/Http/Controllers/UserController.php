@@ -4,12 +4,12 @@
 
     use App\User;
     use Illuminate\Http\Request;
+    use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\Hash;
     use Illuminate\Support\Facades\Validator;
 
     class UserController extends Controller
     {
-
         // Get all users
         public function index() {
             $users = User::get();
@@ -31,19 +31,18 @@
                 'email' => 'required|string|max:255',
                 ]);
 
-    
                 if ($validator->fails()) {
                     return response()->json(['error'=>$validator->errors()], 401); 
                 } else {
-
                     $user->name = $request->name;
                     $user->email = $request->email;
+                    $user->avatar = $request->avatar;
 
                     if($request->get('password')){
                         $user->password = bcrypt($request->password);
                     }
                     $user->save();
-                    return response()->json(['user' => $user, 'message' => 'Your profile was updated']);
+                    return response()->json(['user' => $user, 'message' => 'Your profile is updated!']);
                 
                 }
           
@@ -54,6 +53,9 @@
         // Delete user
         public function destroy($id)
         {
-            // Delete projects connected to user
+            $user = Auth::user();
+            $user->delete();
+            return response()->json(['message' => 'User was deleted']);
+
         }
     }
