@@ -18,10 +18,10 @@ class CreateProjectsTable extends Migration
             $table->string('name');
             $table->text('description');
             $table->integer('creator_id');
+            $table->boolean('active')->default(true);
             $table->unsignedInteger('client_id')->default(0);
             $table->timestamps();
         });
-
     }
 
     /**

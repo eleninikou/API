@@ -15,7 +15,7 @@ class Project extends Model
         'description',
         'creator_id',
         'client_id',
-        
+        'active'
     ];
     
     protected $table = 'projects';

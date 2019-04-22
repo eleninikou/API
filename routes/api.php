@@ -47,6 +47,7 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::resource('roles', 'RoleController')->except(['create', 'edit']);
     Route::get('user', 'API\PassportController@details');
     Route::resource('users', 'UserController')->except(['create', 'edit']);
+    Route::put('users/delete/{id}', 'UserController@deleteAccount');
 
     Route::get('activity/user', 'ProjectActivityController@projectActivity');
     Route::resource('activity', 'UserController')->except(['create', 'edit', 'update', ]);

@@ -119,6 +119,7 @@ class ProjectController extends Controller{
                 $project->name = $request->get('name');
                 $project->description = $request->get('description');
                 $project->creator_id = $user->id;
+                $project->active = $request->get('active');
                 $project->client_id = $request->get('client_id');
                 $project->save();
                 return response()->json(['project' => $project, 'message' => 'The project was updated!']);

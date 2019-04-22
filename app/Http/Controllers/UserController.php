@@ -49,13 +49,20 @@
                 return response()->json(['message' => 'Couldn\'t update user']);
         }
 
+        public function deleteAccount($id) {
+            $user = User::find($id);
+            $user->email = null;
+            $user->password = null;
+            $user->avatar = null;
+            $user->save();
+    
+            return response()->json(['message' => 'Your account is now deleted!']);
+        }
+
         
         // Delete user
         public function destroy($id)
         {
-            $user = Auth::user();
-            $user->delete();
-            return response()->json(['message' => 'User was deleted']);
 
         }
     }
