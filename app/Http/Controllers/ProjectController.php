@@ -27,10 +27,10 @@ class ProjectController extends Controller{
         return response()->json(['projects' => $projects]);
     }
 
-    // Show projects created by user
+    // Show projects connected to user
     public function activeProjects() {
         $user = Auth::user();
-        $projects = ProjectUserRole::with('project', 'role', 'tickets', 'milestones')->where('user_id', $user->id)->distinct('project')->get();
+        $projects = ProjectUserRole::with('project', 'role', 'tickets', 'milestones')->where('user_id', $user->id)->distinct('project')->orderBy('updated_at', 'desc')->get();
         $project_ids = ProjectUserRole::where('user_id', $user->id)->pluck('project_id');
         $milestones = [];
 
