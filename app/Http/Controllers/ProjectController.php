@@ -35,7 +35,7 @@ class ProjectController extends Controller{
         $milestones = [];
 
         foreach ($project_ids as $id) {
-            $milestone = Milestone::where('project_id', $id)->with('project')->get();
+            $milestone = Milestone::where('project_id', $id)->with('tickets', 'project')->get();
             array_push($milestones, $milestone);
         }
 
