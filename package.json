@@ -1,6 +1,11 @@
 {
     "private": true,
     "scripts": {
+        "post-install-cmd": [ 
+            "php artisan clear-compiled",
+            "chmod -R 777 storage", 
+            "php artisan passport:keys"
+        ],
         "dev": "npm run development",
         "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
         "watch": "npm run development -- --watch",
