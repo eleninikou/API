@@ -11,7 +11,7 @@
 |
 */
 
-Route::post('login', 'API\PassportController@login');
+Route::post('login', 'API\PassportController@login')->middleware('cors');
 Route::post('register', 'API\PassportController@register');
 Route::post('google', 'API\PassportController@googleAuth');
 Route::get('accept/{token}', 'InviteController@accept'); 
