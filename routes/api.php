@@ -12,13 +12,13 @@
 */
 
 Route::post('login', 'API\PassportController@login')->middleware('cors');
-Route::post('register', 'API\PassportController@register');
-Route::post('google', 'API\PassportController@googleAuth');
-Route::get('accept/{token}', 'InviteController@accept'); 
-Route::get('invitation/{token}', 'InviteController@getEmail'); 
+Route::post('register', 'API\PassportController@register')->middleware('cors');
+Route::post('google', 'API\PassportController@googleAuth')->middleware('cors');
+Route::get('accept/{token}', 'InviteController@accept')->middleware('cors'); 
+Route::get('invitation/{token}', 'InviteController@getEmail')->middleware('cors'); 
 
 
-Route::group(['middleware' => 'auth:api'], function(){
+Route::group(['middleware' => 'auth:api', 'cors'], function(){
     Route::post('logout','API\PassportController@logout'); 
 
     Route::get('projects/user/all', 'ProjectController@activeProjects');
