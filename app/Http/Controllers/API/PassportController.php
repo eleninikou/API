@@ -27,6 +27,7 @@ class PassportController extends Controller
     public function login(Request $request) {
         // check if they're an existing user
         $existingUser = User::where('email', $request->email)->first();
+
         if($existingUser){
             $hashedPassword = $existingUser->password;
             if(Hash::check($request->password, $hashedPassword)) {
@@ -41,9 +42,10 @@ class PassportController extends Controller
                 $success['user'] = null;
                 return response()->json(["success" => $success]);
             }
-        } else {
-            return response()->json(["message" => 'This email is not registred!']);
-        }
+        } 
+        
+        return response()->json(["message" => 'This email is not registred!']);
+        
     }
 
 
