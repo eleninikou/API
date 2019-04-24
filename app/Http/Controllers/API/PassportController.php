@@ -28,12 +28,16 @@ class PassportController extends Controller
         // check if they're an existing user
         $existingUser = User::where('email', $request->email)->first();
         if($existingUser){
+            if(Hash::check($request->password, $existingUser->password)) {
             // log them in
             auth()->login($existingUser, true);
             $user = Auth::user();
             $success['token'] = $existingUser->createToken('Success')->accessToken;
             $success['user'] = $existingUser;
             return response()->json(["success" => $success]);
+            } else {
+                return response()->json(["message" => 'wrong password']);
+            }
         }
         return response()->json(["message" => 'not existing user']);
     }

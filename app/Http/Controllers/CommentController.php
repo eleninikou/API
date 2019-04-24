@@ -70,7 +70,7 @@ class CommentController extends Controller
 
     }
 
-    // Show on Comment
+    // Show  comment
     public function show($id)
     {
         $comment = TicketComment::with('user', 'attachments')->find($id);
