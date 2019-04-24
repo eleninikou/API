@@ -27,8 +27,8 @@ class PassportController extends Controller
     public function login(Request $request) {
         // check if they're an existing user
         $existingUser = User::where('email', $request->email)->first();
-        $hashedPassword = $existingUser->password;
         if($existingUser){
+            $hashedPassword = $existingUser->password;
             if(Hash::check($request->password, $hashedPassword)) {
             // log them in
             auth()->login($existingUser, true);
