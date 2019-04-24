@@ -39,9 +39,7 @@ class PassportController extends Controller
             $success['user'] = $existingUser;
                 return response()->json(["success" => $success]);
             } else {
-                $success['token'] = null;
-                $success['user'] = null;
-                return response()->json(["success" => $success, 'message' => 'Wrong password']);
+                return response()->json(['message' => 'Wrong password']);
             }
         } 
 
