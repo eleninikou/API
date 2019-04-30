@@ -131,7 +131,6 @@ class TicketController extends Controller
 
     // edit ticket
     public function update(Request $request, $id) {
-        // TicketAttachmet - fix!
         $ticket = Ticket::find($id);
         $ticket_status = TicketStatus::find($ticket->status_id);
         $user = Auth::user();
@@ -151,7 +150,7 @@ class TicketController extends Controller
             $ticket->milestone_id = $request->milestone_id;
 
             foreach($request->image_urls as $url) {
-                TicketAttachment::firstOrNew([
+                TicketAttachment::updateOrCreate([
                     'ticket_id' => $ticket->id,
                     'attachment' => $url
                 ]);
@@ -200,7 +199,7 @@ class TicketController extends Controller
             return response()->json(['ticket' => $ticket, 'message' => 'Ticket was updated']);
                 
         } else {
-            return response()->json(['message' => 'You cant make any changes on this ticket' ]);
+            return response()->json(['message' => 'You can\'t make any changes on this ticket' ]);
         }
 
     }
