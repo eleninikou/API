@@ -150,7 +150,7 @@ class TicketController extends Controller
             $ticket->milestone_id = $request->milestone_id;
 
             foreach($request->image_urls as $url) {
-                TicketAttachment::updateOrCreate([
+                TicketAttachment::firstOrCreate([
                     'ticket_id' => $ticket->id,
                     'attachment' => $url
                 ]);
