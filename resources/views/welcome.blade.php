@@ -67,7 +67,8 @@
         <div class="flex-center position-ref full-height">
             @if (Route::has('login'))
                 <div class="top-right links">
-                    @auth
+                    <a href="https://documenter.getpostman.com/view/3252966/S1EUuw69">Routes</a>
+                    {{-- @auth
                         <a href="{{ url('/home') }}">Home</a>
                     @else
                         <a href="{{ route('login') }}">Login</a>
@@ -75,7 +76,7 @@
                         @if (Route::has('register'))
                             <a href="{{ route('register') }}">Register</a>
                         @endif
-                    @endauth
+                    @endauth --}}
                 </div>
             @endif
 
