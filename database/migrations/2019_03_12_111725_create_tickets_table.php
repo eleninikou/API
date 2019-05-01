@@ -24,7 +24,7 @@ class CreateTicketsTable extends Migration
             $table->dateTime('due_date');
             $table->integer('creator_id');
             $table->integer('assigned_user_id');
-            $table->integer('milestone_id');
+            $table->integer('milestone_id')->nullable();
             $table->timestamps();
         });
 
