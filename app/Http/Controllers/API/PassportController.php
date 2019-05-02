@@ -75,8 +75,13 @@ class PassportController extends Controller
 
 
     public function logout() {
-        $user = Auth::user()->token();
-        $user->revoke();
+        $accessToken = Auth::user()->token();
+        DB::table('oauth_refresh_tokens')
+            ->where('access_token_id', $accessToken->id)
+            ->update([
+                'revoked' => true
+            ]);
+        $accessToken->revoke();
         return response()->json(['message' => 'User was logged out.']);
     }
 

@@ -125,9 +125,6 @@ class User extends Authenticatable
         });
     }
 
-    public function OauthAccessToken(){
-        return $this->hasMany('\App\OauthAccessToken');
-    }
 
 
 }
