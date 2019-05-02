@@ -50,7 +50,6 @@ class TicketController extends Controller
             'project_id' => 'required',
             'priority' => 'required',
             'due_date' => 'required',
-            'milestone_id' => 'required'
         ]);
             
         if ($validator->fails()) {
