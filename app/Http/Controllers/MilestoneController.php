@@ -29,7 +29,6 @@ class MilestoneController extends Controller
         $user = Auth::user();
         $validator = Validator::make($request->all(), [
             'title' => 'required',
-            'focus' => 'required',
             'project_id' => 'required',
             'due_date' => 'required',
         ]);

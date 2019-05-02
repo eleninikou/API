@@ -16,7 +16,7 @@ class CreateMilestonesTable extends Migration
         Schema::create('milestones', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('title');
-            $table->text('focus');
+            $table->text('focus')->nullable();
             $table->integer('project_id');
             $table->dateTime('due_date');
             $table->timestamps();

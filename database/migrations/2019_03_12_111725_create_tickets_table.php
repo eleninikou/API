@@ -21,7 +21,7 @@ class CreateTicketsTable extends Migration
             $table->integer('type_id');
             $table->integer('project_id');
             $table->enum('priority', ['low', 'normal', 'high'])->default('low');
-            $table->dateTime('due_date');
+            $table->dateTime('due_date')->nullable();
             $table->integer('creator_id');
             $table->integer('assigned_user_id');
             $table->integer('milestone_id')->nullable();

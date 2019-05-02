@@ -63,7 +63,6 @@ class TicketController extends Controller
                 'status_id' => $request->status_id,
                 'project_id' => $request->project_id,
                 'priority' => $request->priority,
-                'due_date' => $request->due_date,
                 'creator_id' => $user->id,
                 'assigned_user_id' => $request->assigned_user_id,
                 'milestone_id' => $request->milestone_id

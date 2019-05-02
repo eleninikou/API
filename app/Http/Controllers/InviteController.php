@@ -17,6 +17,12 @@ class InviteController extends Controller
     public function invite(Request $request, $id) {
         
         $project = Project::findOrFail($id);
+        $invitation = Invite::findOrFail($request->get('email'));
+
+        if($invitation) {
+            return response()->json(['message' => 'This user has allready been invited']);
+        } else {
+
         do {  $token = str_random();  } 
         // loop through invitations 
         //check if the token already exists and if it does, try again
@@ -34,6 +40,7 @@ class InviteController extends Controller
             // send the email
             Mail::to($request->get('email'))->send(new Invitation($invitation));
             return response()->json(['message' => 'The invitation was successfully sent']);
+        }
     }
         
     public function accept($token){
