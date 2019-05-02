@@ -79,7 +79,7 @@ class PassportController extends Controller
         $accessToken = Auth::user()->token();
 
         DB::table('oauth_refresh_tokens')
-            ->firstOrCreate('access_token_id', $accessToken->id)
+            ->where('access_token_id', $accessToken->id)
             ->update([
                 'revoked' => true
             ]);
