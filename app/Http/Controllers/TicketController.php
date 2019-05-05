@@ -49,7 +49,6 @@ class TicketController extends Controller
             'status_id' => 'required',
             'project_id' => 'required',
             'priority' => 'required',
-            'due_date' => 'required',
         ]);
             
         if ($validator->fails()) {
@@ -65,7 +64,8 @@ class TicketController extends Controller
                 'priority' => $request->priority,
                 'creator_id' => $user->id,
                 'assigned_user_id' => $request->assigned_user_id,
-                'milestone_id' => $request->milestone_id
+                'milestone_id' => $request->milestone_id,
+                'due_date' => $request->due_date
             ]);
 
             foreach($request->image_urls as $url) {
@@ -130,14 +130,15 @@ class TicketController extends Controller
     // edit ticket
     public function update(Request $request, $id) {
 
-        $ticket = Ticket::find($id);
-        $ticket_status = TicketStatus::find($ticket->status_id);
-        $user = Auth::user();
-        $description = serialize($request->description);
-        $images = TicketAttachment::where('ticket_id', $id)->get();
-        $urls = $request->urls;
-
         if ($user->id == ($ticket->creator_id || $ticket->assigned_user_id)) {
+
+            $ticket = Ticket::find($id);
+            $ticket_status = TicketStatus::find($ticket->status_id);
+            $user = Auth::user();
+            $description = serialize($request->description);
+            $images = TicketAttachment::where('ticket_id', $id)->get();
+            $urls = $request->urls;
+
             $ticket->title = $request->title;
             $ticket->description = $description;
             $ticket->type_id = $request->type_id;
