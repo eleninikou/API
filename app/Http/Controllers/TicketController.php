@@ -184,11 +184,9 @@ class TicketController extends Controller
                     'text' => $text
                     ]);
 
-                if($request->image_urls) {
-                    foreach($request->image_urls as $url) {
-                            $attachment = TicketAttachment::firstOrCreate(
-                                ['attachment' => $url], ['ticket_id' => $ticket->id]);
-                        }
+                foreach($request->image_urls as $url) {
+                    $attachment = TicketAttachment::firstOrCreate(
+                        ['attachment' => $url], ['ticket_id' => $ticket->id]);
                 }
             }
             
