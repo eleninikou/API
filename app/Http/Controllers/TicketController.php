@@ -129,13 +129,15 @@ class TicketController extends Controller
 
     // edit ticket
     public function update(Request $request, $id) {
-        dd($request);
 
         $ticket = Ticket::find($id);
         $ticket_status = TicketStatus::find($ticket->status_id);
         $user = Auth::user();
         $description = serialize($request->description);
+        $images = TicketAttachment::where('ticket_id', $ticket->id)->get();
 
+        
+        
         if ($user->id == ($ticket->creator_id || $ticket->assigned_user_id)) {
             $ticket->title = $request->title;
             $ticket->description = $description;
@@ -148,8 +150,18 @@ class TicketController extends Controller
             $ticket->assigned_user_id = $request->assigned_user_id;
             $ticket->milestone_id = $request->milestone_id;
             $ticket->save();
+            
+            // Delete old images
+            foreach($images as $image) {
+                // Also remove from storage
+                $name = basename($image['attachment']);
+                Storage::delete('/public/'.substr_replace($name,"",-1));
+            }
+            $images->delete();
 
-            foreach($request->image_urls as $url) {
+            // Create new images
+            $urls = $request->image_urls;
+            foreach($urls as $url) {
                 TicketAttachment::create([
                     'ticket_id' => $ticket->id,
                     'attachment' => $url
