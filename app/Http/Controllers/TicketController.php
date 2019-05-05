@@ -147,11 +147,6 @@ class TicketController extends Controller
             $ticket->assigned_user_id = $request->assigned_user_id;
             $ticket->milestone_id = $request->milestone_id;
             $ticket->save();
-        
-            foreach($request->image_urls as $url) {
-                TicketAttachment::firstOrCreate(
-                    ['attachment' => $url], ['ticket_id' => $ticket->id]);
-                }
             
             // If status has changed
             if ($ticket_status->id !== $ticket->status_id) {
@@ -188,6 +183,13 @@ class TicketController extends Controller
                     'type' => 'ticket',
                     'text' => $text
                     ]);
+
+                if($request->image_urls) {
+                    foreach($request->image_urls as $url) {
+                            $attachment = TicketAttachment::firstOrCreate(
+                                ['attachment' => $url], ['ticket_id' => $ticket->id]);
+                        }
+                }
             }
             
 
