@@ -130,11 +130,11 @@ class TicketController extends Controller
     // edit ticket
     public function update(Request $request, $id) {
 
+        $user = Auth::user();
         if ($user->id == ($ticket->creator_id || $ticket->assigned_user_id)) {
 
             $ticket = Ticket::find($id);
             $ticket_status = TicketStatus::find($ticket->status_id);
-            $user = Auth::user();
             $description = serialize($request->description);
             $images = TicketAttachment::where('ticket_id', $id)->get();
             $urls = $request->urls;
