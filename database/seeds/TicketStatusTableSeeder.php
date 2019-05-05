@@ -31,7 +31,7 @@ class TicketStatusTableSeeder extends Seeder
             'status' => 'To be discussed',
         ]);
         TicketStatus::create([
-            'status' => 'archived',
+            'status' => 'Archived',
         ]);
     }
 }

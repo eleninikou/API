@@ -129,6 +129,7 @@ class TicketController extends Controller
 
     // edit ticket
     public function update(Request $request, $id) {
+
         $ticket = Ticket::find($id);
         $ticket_status = TicketStatus::find($ticket->status_id);
         $user = Auth::user();
@@ -149,8 +150,7 @@ class TicketController extends Controller
 
             foreach($request->image_urls as $url) {
                 TicketAttachment::firstOrCreate(
-                    ['attachment' => $url],
-                    ['ticket_id' => $ticket->id]);
+                    ['attachment' => $url], ['ticket_id' => $ticket->id]);
             }
 
             $ticket->save();
