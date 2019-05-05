@@ -129,6 +129,7 @@ class TicketController extends Controller
 
     // edit ticket
     public function update(Request $request, $id) {
+        dd($request);
 
         $ticket = Ticket::find($id);
         $ticket_status = TicketStatus::find($ticket->status_id);
