@@ -154,8 +154,9 @@ class TicketController extends Controller
                 // Also remove from storage
                 $name = basename($image['attachment']);
                 Storage::delete('/public/'.substr_replace($name,"",-1));
+                $image->delete();
             }
-            $images->delete();
+            
 
             // Create new images
             $urls = $request->image_urls;
