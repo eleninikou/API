@@ -149,8 +149,10 @@ class TicketController extends Controller
             $ticket->save();
 
             foreach($request->image_urls as $url) {
-                $attachment = TicketAttachment::firstOrCreate(
-                    ['attachment' => $url], ['ticket_id' => $ticket->id]);
+                TicketAttachment::create([
+                    'ticket_id' => $ticket->id,
+                    'attachment' => $url
+                ]);
             }
             
             // If status has changed
