@@ -157,13 +157,11 @@ class TicketController extends Controller
                 $image->delete();
             }
             
-
             // Create new images
-            $urls = $request->image_urls;
-            foreach($urls as $url) {
+            foreach($request->image_urls as $url) {
                 TicketAttachment::create([
-                    'ticket_id' => $id,
-                    'attachment' => $url->attachment
+                    'ticket_id' => $ticket->id,
+                    'attachment' => $url
                 ]);
             }
             
