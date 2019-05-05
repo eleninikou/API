@@ -135,7 +135,8 @@ class TicketController extends Controller
         $user = Auth::user();
         $description = serialize($request->description);
         $images = TicketAttachment::where('ticket_id', $id)->get();
-        
+        $urls = $request->urls;
+
         if ($user->id == ($ticket->creator_id || $ticket->assigned_user_id)) {
             $ticket->title = $request->title;
             $ticket->description = $description;
@@ -158,7 +159,7 @@ class TicketController extends Controller
             }
             
             // Create new images
-            foreach($request->image_urls as $url) {
+            foreach($urls as $url) {
                 TicketAttachment::create([
                     'ticket_id' => $ticket->id,
                     'attachment' => $url
