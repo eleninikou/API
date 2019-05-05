@@ -163,7 +163,7 @@ class TicketController extends Controller
             foreach($urls as $url) {
                 TicketAttachment::create([
                     'ticket_id' => $id,
-                    'attachment' => $url
+                    'attachment' => $url->attachment
                 ]);
             }
             
