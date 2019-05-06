@@ -33,13 +33,14 @@ class TicketAttachmentController extends Controller
 
         // Delete old images
         $images = TicketAttachment::where('ticket_id', $id)->get();
-        foreach($images as $image) {
-            // Also remove from storage
-            $name = basename($image['attachment']);
-            Storage::delete('/public/'.substr_replace($name,"",-1));
-            $image->delete();
+        if($images) {
+            foreach($images as $image) {
+                // Also remove from storage
+                $name = basename($image['attachment']);
+                Storage::delete('/public/'.substr_replace($name,"",-1));
+                $image->delete();
+            }
         }
-        
         
         $urls = $request->urls;
         // Create new images
@@ -64,7 +65,7 @@ class TicketAttachmentController extends Controller
     {
         $image = TicketAttachment::find($id);
         $ticket_id = TicketAttachment::find($id)->pluck('ticket_id');
-        $rest = TicketAttachment::where('ticket_id', $ticket_id);
+        $rest = TicketAttachment::where('ticket_id', $ticket_id)->get();
         if ($image) {
             $image->delete();
             return response()->json(['message' => 'Image is deleted', 'images' => $rest]);
