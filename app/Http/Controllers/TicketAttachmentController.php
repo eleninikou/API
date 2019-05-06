@@ -32,7 +32,7 @@ class TicketAttachmentController extends Controller
     {
 
         // Delete old images
-        $images = TicketAttachment::where('ticket_id', $id);
+        $images = TicketAttachment::where('ticket_id', $id)->get();
         foreach($images as $image) {
             // Also remove from storage
             $name = basename($image['attachment']);
