@@ -131,9 +131,10 @@ class TicketController extends Controller
     public function update(Request $request, $id) {
 
         $user = Auth::user();
+        $ticket = Ticket::find($id);
+
         if ($user->id == ($ticket->creator_id || $ticket->assigned_user_id)) {
 
-            $ticket = Ticket::find($id);
             $ticket_status = TicketStatus::find($ticket->status_id);
             $description = serialize($request->description);
             $images = TicketAttachment::where('ticket_id', $id)->get();
@@ -203,10 +204,17 @@ class TicketController extends Controller
                     'text' => $text
                     ]);
 
+                $ticketImages = TicketAttachment::where('ticket_id', $id)->get();
+
             }
             
 
-            return response()->json(['ticket' => $ticket, 'message' => 'Ticket was updated']);
+            return response()->json([
+                'message' => 'Ticket was updated',
+                'ticket' => $ticket, 
+                'description' => unserialize($ticket->description),
+                'images' => $ticketImages
+                ]);
                 
         } else {
             return response()->json(['message' => 'You can\'t make any changes on this ticket' ]);
