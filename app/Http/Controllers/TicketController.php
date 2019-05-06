@@ -152,22 +152,6 @@ class TicketController extends Controller
             $ticket->milestone_id = $request->milestone_id;
             $ticket->save();
             
-            // Delete old images
-            foreach($images as $image) {
-                // Also remove from storage
-                $name = basename($image['attachment']);
-                Storage::delete('/public/'.substr_replace($name,"",-1));
-                $image->delete();
-            }
-            
-            // Create new images
-            foreach($urls as $url) {
-                TicketAttachment::create([
-                    'ticket_id' => $ticket->id,
-                    'attachment' => $url
-                ]);
-            }
-            
             // If status has changed
             if ($ticket_status->id !== $ticket->status_id) {
                 switch ($request->status_id) {
@@ -203,17 +187,12 @@ class TicketController extends Controller
                     'type' => 'ticket',
                     'text' => $text
                     ]);
-
-                    
                 }
                 
-            $ticketImages = TicketAttachment::where('ticket_id', $id)->get();
-
             return response()->json([
                 'message' => 'Ticket was updated',
                 'ticket' => $ticket, 
                 'description' => unserialize($ticket->description),
-                'images' => $ticketImages
                 ]);
                 
         } else {

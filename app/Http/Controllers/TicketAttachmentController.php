@@ -8,39 +8,13 @@ use App\TicketAttachment;
 
 class TicketAttachmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
 
         $image = $request->file;
         $input['imagename'] = time();
         $name = $image->getClientOriginalName();
-
 
         $url = Storage::disk('uploads')->put('/', $image);
         
@@ -54,46 +28,38 @@ class TicketAttachmentController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\TicketAttachment  $ticketAttachment
-     * @return \Illuminate\Http\Response
-     */
-    public function show(TicketAttachment $ticketAttachment)
+    public function updateImages(Request $request, $id)
     {
-        //
+
+        // Delete old images
+        $images = TicketAttachment::where('ticket_id', $id);
+        foreach($images as $image) {
+            // Also remove from storage
+            $name = basename($image['attachment']);
+            Storage::delete('/public/'.substr_replace($name,"",-1));
+            $image->delete();
+        }
+        
+        
+        $urls = $request->urls;
+        // Create new images
+        foreach($urls as $url) {
+            TicketAttachment::create([
+                'ticket_id' => $ticket->id,
+                'attachment' => $url
+            ]);
+        }
+
+        $newImages = TicketAttachment::where('ticket_id', $id);
+
+
+        return response()->json([
+            'message' => 'Images updated',
+            'images' => $newImages
+            ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\TicketAttachment  $ticketAttachment
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(TicketAttachment $ticketAttachment)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\TicketAttachment  $ticketAttachment
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, TicketAttachment $ticketAttachment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\TicketAttachment  $ticketAttachment
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $image = TicketAttachment::find($id);
