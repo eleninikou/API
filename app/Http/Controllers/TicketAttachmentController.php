@@ -51,9 +51,7 @@ class TicketAttachmentController extends Controller
             ]);
         }
 
-        $newImages = TicketAttachment::where('ticket_id', $id);
-
-
+        $newImages = TicketAttachment::where('ticket_id', $request->id);
         return response()->json([
             'message' => 'Images updated',
             'images' => $newImages
