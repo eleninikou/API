@@ -45,7 +45,8 @@ class InviteController extends Controller
         
     public function accept($token){
         // Look up the invite
-        if (!$invite = Invite::where('token', $token)->first()) {
+        $invite = Invite::where('token', $token)->first();
+        if (!$invite) {
             return response()->json(['message' => 'Seems like you invitation got lost']);
         }
 

@@ -30,7 +30,6 @@ class TicketAttachmentController extends Controller
 
     public function updateImages(Request $request)
     {
-
         // Delete old images
         $images = TicketAttachment::where('ticket_id', $request->id)->get();
         if($images) {
