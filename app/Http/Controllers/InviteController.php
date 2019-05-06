@@ -124,9 +124,10 @@ class InviteController extends Controller
             }
             
             return response()->json(['email' => $email, 'existing' => $existing ]);
+        } else {
+            return response()->json(['message' => 'Your invitation expired' ]);
         }
 
-        return response()->json(['message' => 'Your invitation expired' ]);
 
     }
 }
