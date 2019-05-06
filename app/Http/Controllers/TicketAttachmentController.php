@@ -41,7 +41,7 @@ class TicketAttachmentController extends Controller
         }
         
         
-        $urls = $request;
+        $urls = $request->urls;
         // Create new images
         foreach($urls as $url) {
             TicketAttachment::create([
