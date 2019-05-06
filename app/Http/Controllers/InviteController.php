@@ -112,7 +112,7 @@ class InviteController extends Controller
     // Get email
     public function getEmail($token) {
 
-        $email= Invite::where('token', $token)->pluck('email');
+        $email = Invite::where('token', $token)->pluck('email');
 
         if($email) {
             $existingUser = User::where('email', $email)->first();
@@ -125,7 +125,7 @@ class InviteController extends Controller
             
             return response()->json(['email' => $email, 'existing' => $existing ]);
         } else {
-            return response()->json(['message' => 'Your invitation expired' ]);
+            return response()->json(['message' => 'Your invitation has expired' ]);
         }
 
 

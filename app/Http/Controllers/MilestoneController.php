@@ -30,7 +30,6 @@ class MilestoneController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'project_id' => 'required',
-            'due_date' => 'required',
         ]);
             
         if ($validator->fails()) {
@@ -82,9 +81,7 @@ class MilestoneController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
-                'focus' => 'required',
                 'project_id' => 'required',
-                'due_date' => 'required',
             ]);
 
             if ($validator->fails()) {
