@@ -204,10 +204,10 @@ class TicketController extends Controller
                     'text' => $text
                     ]);
 
-                $ticketImages = TicketAttachment::where('ticket_id', $id)->get();
-
-            }
-            
+                    
+                }
+                
+            $ticketImages = TicketAttachment::where('ticket_id', $id)->get();
 
             return response()->json([
                 'message' => 'Ticket was updated',
