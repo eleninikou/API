@@ -28,12 +28,11 @@ class TicketAttachmentController extends Controller
 
     }
 
-    public function updateImages(Request $request, $id)
+    public function updateImages(Request $request)
     {
 
-        dd($request);
         // Delete old images
-        $images = TicketAttachment::where('ticket_id', $id)->get();
+        $images = TicketAttachment::where('ticket_id', $request->id)->get();
         if($images) {
             foreach($images as $image) {
                 // Also remove from storage

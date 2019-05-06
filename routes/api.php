@@ -31,7 +31,7 @@ Route::group(['middleware' => 'auth:api', 'cors'], function(){
     Route::get('projects/{id}/invited', 'InviteController@usersInvited'); 
 
     Route::get('tickets/user', 'TicketController@userTickets');
-    Route::post('tickets/image/{id}/update', 'TicketAttachmentController@updateImages');
+    Route::post('tickets/image/update', 'TicketAttachmentController@updateImages');
     Route::delete('tickets/image/{id}', 'TicketAttachmentController@destroy');
     Route::post('tickets/image', 'TicketAttachmentController@store');
     Route::delete('tickets/storage', 'TicketController@storageRemove');
