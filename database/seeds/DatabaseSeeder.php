@@ -18,9 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(MilestonesTableSeeder::class);
         $this->call(TicketTypesTableSeeder::class);
         $this->call(TicketStatusTableSeeder::class);
-        $this->call(TicketsTableSeeder::class);
-        $this->call(TicketCommentsTableSeeder::class);
         $this->call(InvitesTableSeeder::class);
-
     }
 }

@@ -8,4 +8,6 @@
     Accept invitation
 @endcomponent
 
+[image]: {{asset('/environment.png')}} "Image"
+
 @endcomponent
