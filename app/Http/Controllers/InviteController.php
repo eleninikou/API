@@ -17,7 +17,7 @@ class InviteController extends Controller
     public function invite(Request $request, $id) {
         
         $project = Project::findOrFail($id);
-        $invitation = Invite::where('email', $request->get('email'), 'project_id', $id)->first();
+        $invitations = Invite::where('email', $request->get('email'))->where('project_id', $id)->get();
 
         if($invitation) {
             return response()->json(['message' => 'This user has allready been invited']);
@@ -29,7 +29,7 @@ class InviteController extends Controller
         while (Invite::where('token', $token)->first());
 
             //create a new invite record
-            $invitation = Invite::create([
+            $new_invitation = Invite::create([
                 'email' => $request->get('email'),
                 'token' => $token,
                 'project_id' => $project->id,
@@ -37,10 +37,10 @@ class InviteController extends Controller
                 'project_role' => $request->get('project_role')
             ]);
 
-            if ($invitation) {
+            if ($new_invitation) {
                 // send the email
-                Mail::to($request->get('email'))->send(new Invitation($invitation));
-                return response()->json(['message' => 'The invitation was successfully sent', 'inviation' => $invitation]);
+                Mail::to($request->get('email'))->send(new Invitation($new_invitation));
+                return response()->json(['message' => 'The invitation was successfully sent', 'inviation' => $new_invitation]);
             } else {
                 return response()->json(['message' => 'Could not send invitation']);
 
