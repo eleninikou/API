@@ -17,34 +17,30 @@ class InviteController extends Controller
     public function invite(Request $request, $id) {
         
         $project = Project::findOrFail($id);
-        $invitation = Invite::where([['email', $request->get('email')], ['project_id', $id]])->get();
+        $invitation = Invite::where([['email', '=', $request->get('email')], ['project_id', '=', $id]])->first();
 
         if($invitation) {
             return response()->json(['message' => 'This user has allready been invited']);
         } else {
 
-        do {  $token = str_random();  } 
+        do { $token = str_random(); } 
         // loop through invitations 
-        //check if the token already exists and if it does, try again
+        // check if the token already exists and if it does, try again
         while (Invite::where('token', $token)->first());
 
-            //create a new invite record
-            $new_invitation = Invite::create([
-                'email' => $request->get('email'),
-                'token' => $token,
-                'project_id' => $project->id,
-                'project_name' => $project->name,
-                'project_role' => $request->get('project_role')
-            ]);
+        //create a new invite record
+        $new_invitation = Invite::create([
+            'email' => $request->get('email'),
+            'token' => $token,
+            'project_id' => $project->id,
+            'project_name' => $project->name,
+            'project_role' => $request->get('project_role')
+        ]);
 
-            if ($new_invitation) {
-                // send the email
-                Mail::to($request->get('email'))->send(new Invitation($new_invitation));
-                return response()->json(['message' => 'The invitation was successfully sent', 'inviation' => $new_invitation]);
-            } else {
-                return response()->json(['message' => 'Could not send invitation']);
+        // send the email
+        Mail::to($request->get('email'))->send(new Invitation($new_invitation));
+        return response()->json(['message' => 'The invitation was successfully sent', 'inviation' => $new_invitation]);
 
-            }
         
         }
     }
