@@ -17,7 +17,7 @@ class InviteController extends Controller
     public function invite(Request $request, $id) {
         
         $project = Project::findOrFail($id);
-        $invitation = Invite::where('email', $request->get('email'))->first();
+        $invitation = Invite::where('email', $request->get('email'), 'project_id', $id)->first();
 
         if($invitation) {
             return response()->json(['message' => 'This user has allready been invited']);
