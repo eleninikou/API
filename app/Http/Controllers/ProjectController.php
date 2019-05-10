@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Project;
 use App\Ticket;
+use App\Invite;
 use App\User;
 use App\Milestone;
 use App\ProjectUserRole;
@@ -95,8 +96,9 @@ class ProjectController extends Controller{
     public function show($id) {
         $project = Project::with('milestones', 'client', 'creator', 'tickets')->find($id);
         $team = ProjectUserRole::where('project_id', $id)->with('user', 'role')->distinct('user')->get();
+        $invited = Invite::where('project_id', $id)->get();
         $tickets = Ticket::where('project_id', $id)->with('creator', 'assignedUser', 'status', 'type')->get();
-        return response()->json(['project' => $project, 'team' => $team, 'tickets' => $tickets]);
+        return response()->json(['project' => $project, 'team' => $team, 'tickets' => $tickets, 'invites' => $invited]);
     }
 
 
