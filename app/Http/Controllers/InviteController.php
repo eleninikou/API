@@ -36,10 +36,16 @@ class InviteController extends Controller
                 'project_name' => $project->name,
                 'project_role' => $request->get('project_role')
             ]);
+
+            if ($invitation) {
+                // send the email
+                Mail::to($request->get('email'))->send(new Invitation($invitation));
+                return response()->json(['message' => 'The invitation was successfully sent', 'inviation' => $invitation]);
+            } else {
+                return response()->json(['message' => 'Could not send invitation']);
+
+            }
         
-            // send the email
-            Mail::to($request->get('email'))->send(new Invitation($invitation));
-            return response()->json(['message' => 'The invitation was successfully sent']);
         }
     }
         
@@ -105,7 +111,7 @@ class InviteController extends Controller
     
     public function usersInvited($id) {
         $emails = Invite::where('project_id', $id)->pluck('email');
-        return response()->json(['emails' => $emails]);
+        return response()->json(['emails' => $emails, 'message' => 'Emails']);
     }
 
 
