@@ -96,7 +96,7 @@ class ProjectController extends Controller{
     public function show($id) {
         $project = Project::with('milestones', 'client', 'creator', 'tickets')->find($id);
         $team = ProjectUserRole::where('project_id', $id)->with('user', 'role')->distinct('user')->get();
-        $invited = Invite::where('project_id', $id)->get();
+        $invited = Invite::where('project_id', $id)->with('role')->get();
         $tickets = Ticket::where('project_id', $id)->with('creator', 'assignedUser', 'status', 'type')->get();
         return response()->json(['project' => $project, 'team' => $team, 'tickets' => $tickets, 'invites' => $invited]);
     }
