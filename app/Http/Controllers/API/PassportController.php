@@ -56,20 +56,21 @@ class PassportController extends Controller
             ]);
             
             if ($validator->fails()) {
-                return response()->json(['error'=>$validator->errors()], 401);            
+                return response()->json(['error' => $validator->errors()], 401);            
+            } else {
+                $reg_user = User::create([ 
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'password' => bcrypt($request->password),
+                    'google_id' => ''
+                ]);
+    
+                $success['token'] = $reg_user->createToken('Success')->accessToken;
+                $success['user'] = $reg_user;
+    
+            return response()->json(['success'=>$success], $this->successStatus);
             }
             
-            $reg_user = User::create([ 
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => bcrypt($request->password),
-                'google_id' => ''
-            ]);
-
-            $success['token'] =  $reg_user->createToken('Success')->accessToken;
-            $success['user'] = $reg_user;
-
-        return response()->json(['success'=>$success], $this->successStatus);
     }
 
 
