@@ -53,7 +53,7 @@ class PassportController extends Controller
         $reg_user = User::where('email', $request->email)->first();
 
         if($reg_user) {
-            return response()->json(['message'=> 'This email is allready registrated']);
+            return response()->json(['message'=> 'This email has allready been registrated']);
 
         } else {
             $validator = Validator::make($request->all(), [
