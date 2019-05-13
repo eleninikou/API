@@ -107,7 +107,6 @@ class MilestoneController extends Controller
         $project = Project::find($milestone->project_id);
 
         if ($user->id == $project->creator_id) {
-            $milestone->tickets()->delete();    
             $milestone->delete();
             return response()->json(['message' => 'Milestone was deleted']);
         } else {

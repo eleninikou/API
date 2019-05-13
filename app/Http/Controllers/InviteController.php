@@ -80,26 +80,7 @@ class InviteController extends Controller
                 return response()->json(['success' => $success, 'message' => 'invitation accepted']);
        
         } else {
-            // $new_user = new User;
-            // $new_user->name = $user->name;
-            // $new_user->email = $user->email;
-            // $new_user->google_id = $user->id;
-            // $new_user->password = md5(rand(1,10000));
-            // $new_user->save();
-            // $user = User::lastInsertedId();
-
-            // ProjectUserRole::create([
-            //     'user_id' => $user->id,
-            //     'role_id' => $invite->project_role,
-            //     'project_id' => $invite->project_id
-            // ]);
-
-            // $invite->delete();
-            // auth()->login($newUser, true);
             return response()->json([ 'message' => 'You need to register']);
-
-
-            // return response()->json(['message' => 'invitation accepted']);
         }
 
     }
@@ -130,6 +111,23 @@ class InviteController extends Controller
             return response()->json(['message' => 'Your invitation has expired' ]);
         }
 
+
+    }
+
+
+    public function deleteInvitation($id) {
+
+        $user = Auth::user();
+        $invitation = Invite::findOrFail($id);
+        $project_id = $invitation->project_id;
+        $project = Project::find($project_id);
+
+        if ($user->id == $project->creator_id) {
+            $invitation->delete();
+            return response()->json(['message' => 'Invitation was deleted']);
+        } else {
+            return response()->json(['message' => 'Only Creator can delete invitations']);
+        }
 
     }
 }
