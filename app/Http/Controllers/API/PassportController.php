@@ -49,28 +49,35 @@ class PassportController extends Controller
 
 
     public function register(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|max:255',
-            'email' => 'required|string|max:255',
-            'password' => 'required|string',
-            ]);
-            
-            if ($validator->fails()) {
-                return response()->json(['error' => $validator->errors()], 401);            
-            } else {
-                $reg_user = User::create([ 
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'password' => bcrypt($request->password),
-                    'google_id' => ''
+
+        $reg_user = User::where('email', $request->email)->first();
+
+        if($reg_user) {
+            return response()->json(['message'=> 'This email is allready registrated']);
+
+        } else {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|max:255',
+                'email' => 'required|string|max:255',
+                'password' => 'required|string',
                 ]);
-    
-                $success['token'] = $reg_user->createToken('Success')->accessToken;
-                $success['user'] = $reg_user;
-    
-            return response()->json(['success'=>$success], $this->successStatus);
-            }
-            
+                
+                if ($validator->fails()) {
+                    return response()->json(['error' => $validator->errors()], 401);            
+                } else {
+                    $reg_user = User::create([ 
+                        'name' => $request->name,
+                        'email' => $request->email,
+                        'password' => bcrypt($request->password),
+                        'google_id' => ''
+                    ]);
+        
+                    $success['token'] = $reg_user->createToken('Success')->accessToken;
+                    $success['user'] = $reg_user;
+        
+                return response()->json(['success'=>$success], $this->successStatus);
+                }
+        }    
     }
 
 
