@@ -124,7 +124,8 @@ class InviteController extends Controller
 
         if ($user->id == $project->creator_id) {
             $invitation->delete();
-            return response()->json(['message' => 'Invitation was deleted']);
+            $invitations = Invite::where('project_id', $project_id)->get();
+            return response()->json(['message' => 'Invitation was deleted', 'invitations' => $invitations ]);
         } else {
             return response()->json(['message' => 'Only Creator can delete invitations']);
         }
