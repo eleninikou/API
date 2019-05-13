@@ -51,9 +51,10 @@
 
         public function deleteAccount($id) {
             $user = User::find($id);
-            $user->email = null;
-            $user->password = null;
-            $user->avatar = null;
+            $user->email = '';
+            $user->password = '';
+            $user->avatar = '';
+            $user->deleted = true;
             $user->save();
     
             return response()->json(['message' => 'Your account is now deleted!']);
