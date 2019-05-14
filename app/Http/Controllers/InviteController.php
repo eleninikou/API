@@ -87,8 +87,8 @@ class InviteController extends Controller
 
     
     public function usersInvited($id) {
-        $emails = Invite::where('project_id', $id)->pluck('email');
-        return response()->json(['emails' => $emails, 'message' => 'Emails']);
+        $invitations = Invite::where('project_id', $id)->get();
+        return response()->json(['invitations' => $invitations ]);
     }
 
 
