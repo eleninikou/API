@@ -18,12 +18,13 @@ class ProjectActivityController extends Controller
     public function projectActivity() {
         $user = Auth::user();
         $projects = ProjectUserRole::where('user_id', $user->id)->pluck('project_id');
-        $activity = [];
+        $activities = [];
         foreach($projects as $project) {
             $act = ProjectActivity::with('project', 'user')->where('project_id', $project)->orderBy('created_at', 'desc')->take(50)->get();
-            array_push($activity, $act);
+            array_push($activities, $act);
         }
 
+        $activity = asort($activityies);
         return response()->json(['activity' => $activity]);
     }
 
